@@ -1,1 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDG Skill Builder</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons for UI elements -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+        .option-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-4px);
+        }
+        .option-card.selected {
+            background-color: #DBEAFE; /* bg-blue-100 */
+            border-color: #3B82F6; /* border-blue-500 */
+            color: #1E40AF; /* text-blue-800 */
+        }
+        #feedback-section {
+            transition: bottom 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div id="game-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
+        
+        <!-- Game Header -->
+        <header class="flex items-center gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">IDG Skill Builder</h1>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div id="progress-bar" class="bg-green-500 h-4 rounded-full progress-bar-fill" style="width: 0%;"></div>
+            </div>
+        </header>
+
+        <!-- Main Game Content -->
+        <div id="game-content">
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">Which skill is being used?</h2>
+            <p id="scenario-text" class="text-gray-600 text-xl mb-6 min-h-[100px]"></p>
+            
+            <div id="options-container" class="space-y-3">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+
+            <button id="check-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">
+                Check
+            </button>
+        </div>
+
+        <!-- Completion Screen -->
+        <div id="completion-screen" class="hidden text-center py-12">
+            <i class="ph-sparkle text-7xl text-yellow-500"></i>
+            <h2 class="text-3xl font-extrabold text-gray-800 mt-4">Great Job!</h2>
+            <p class="text-gray-600 mt-2">You've completed the challenge.</p>
+            <p id="score-text" class="text-lg font-semibold mt-4"></p>
+            <button id="restart-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors">
+                Play Again
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Feedback Section (Slides up from bottom) -->
+    <div id="feedback-section" class="fixed bottom-[-100%] left-0 w-full p-6 rounded-t-2xl shadow-2xl transition-all" style="min-height: 150px;">
+        <div class="flex items-center mb-3">
+            <i id="feedback-icon" class="text-3xl mr-3"></i>
+            <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+        </div>
+        <p id="feedback-explanation" class="text-lg"></p>
+        <button id="continue-btn" class="w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors">
+            Continue
+        </button>
+    </div>
+
+
+    <script>
+        const gameData = [
+            {
+                scenario: "Your team is stuck. Instead of pushing your own idea, you ask, 'What if we looked at this from the customer's perspective?'",
+                options: ["Courage", "Perspective Skills", "Perseverance"],
+                correctAnswer: "Perspective Skills",
+                explanation: "By actively seeking a different viewpoint, you are using your Perspective Skills to unlock new solutions."
+            },
+            {
+                scenario: "You receive critical feedback on a project. Instead of getting defensive, you pause, take a breath, and ask for more details.",
+                options: ["Creativity", "Self-awareness", "Optimism"],
+                correctAnswer: "Self-awareness",
+                explanation: "Recognizing your emotional reaction and choosing to respond thoughtfully is a key part of Self-awareness."
+            },
+            {
+                scenario: "A colleague from a different culture communicates very directly. You remind yourself that communication styles vary and focus on their message.",
+                options: ["Inclusive Mindset", "Co-creation Skills", "Critical Thinking"],
+                correctAnswer: "Inclusive Mindset",
+                explanation: "Embracing and adapting to different cultural norms is a core part of having an Inclusive Mindset."
+            },
+            {
+                scenario: "A community project is taking much longer than expected. Instead of giving up, you remind the team of the long-term vision and break the work into smaller steps.",
+                options: ["Humility", "Perseverance", "Appreciation"],
+                correctAnswer: "Perseverance",
+                explanation: "Sustaining engagement and remaining determined, even when things are difficult, is the essence of Perseverance."
+            },
+            {
+                scenario: "During a brainstorm, you suggest a wild idea that might not work, just to encourage others to think outside the box.",
+                options: ["Trust", "Connectedness", "Creativity"],
+                correctAnswer: "Creativity",
+                explanation: "Generating original ideas and disrupting conventional patterns to foster innovation is a key aspect of Creativity."
+            }
+        ];
+
+        // DOM Elements
+        const progressBar = document.getElementById('progress-bar');
+        const scenarioText = document.getElementById('scenario-text');
+        const optionsContainer = document.getElementById('options-container');
+        const checkBtn = document.getElementById('check-btn');
+        const feedbackSection = document.getElementById('feedback-section');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExplanation = document.getElementById('feedback-explanation');
+        const continueBtn = document.getElementById('continue-btn');
+        const gameContent = document.getElementById('game-content');
+        const completionScreen = document.getElementById('completion-screen');
+        const scoreText = document.getElementById('score-text');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Game State
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null;
+        let score = 0;
+        let questions = [];
+
+        // --- Game Logic ---
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswer = null;
+            questions = shuffleArray([...gameData]);
+            gameContent.style.display = 'block';
+            completionScreen.style.display = 'none';
+            updateProgressBar();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            checkBtn.disabled = true;
+            const currentQuestion = questions[currentQuestionIndex];
+            scenarioText.textContent = currentQuestion.scenario;
+            optionsContainer.innerHTML = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'text-left', 'p-4', 'border-2', 'border-gray-300', 'rounded-xl', 'font-semibold', 'text-gray-700', 'hover:bg-gray-50', 'option-card');
+                button.onclick = () => selectOption(button, option);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectOption(button, option) {
+            // Remove 'selected' from all other options
+            Array.from(optionsContainer.children).forEach(child => {
+                child.classList.remove('selected');
+            });
+
+            // Add 'selected' to the clicked option
+            button.classList.add('selected');
+            selectedAnswer = option;
+            checkBtn.disabled = false;
+        }
+
+        function checkAnswer() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+
+            if (isCorrect) {
+                score++;
+                feedbackTitle.textContent = "Correct!";
+                feedbackIcon.className = 'ph-check-circle text-green-500';
+                feedbackSection.style.backgroundColor = '#D1FAE5'; // bg-green-100
+                feedbackExplanation.style.color = '#065F46'; // text-green-800
+                continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-green-500 text-white hover:bg-green-600';
+            } else {
+                feedbackTitle.textContent = "Not quite...";
+                feedbackIcon.className = 'ph-x-circle text-red-500';
+                feedbackSection.style.backgroundColor = '#FEE2E2'; // bg-red-100
+                feedbackExplanation.style.color = '#991B1B'; // text-red-800
+                continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-red-500 text-white hover:bg-red-600';
+            }
+
+            feedbackExplanation.textContent = currentQuestion.explanation;
+            feedbackSection.style.bottom = '0';
+        }
+
+        function continueGame() {
+            feedbackSection.style.bottom = '-100%';
+            currentQuestionIndex++;
+            selectedAnswer = null;
+            
+            updateProgressBar();
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showCompletionScreen();
+            }
+        }
+        
+        function updateProgressBar() {
+             const progress = (currentQuestionIndex / questions.length) * 100;
+             progressBar.style.width = `${progress}%`;
+        }
+
+        function showCompletionScreen() {
+            gameContent.style.display = 'none';
+            completionScreen.style.display = 'block';
+            scoreText.textContent = `You scored ${score} out of ${questions.length}!`;
+            progressBar.style.width = '100%';
+        }
+        
+        // --- Event Listeners ---
+        checkBtn.addEventListener('click', checkAnswer);
+        continueBtn.addEventListener('click', continueGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // --- Initial Start ---
+        startGame();
+
+    </script>
+
+</body>
+</html>
 
