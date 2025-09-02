@@ -3,20 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDG Skill Builder</title>
-    <!-- Tailwind CSS for styling -->
+    <title>IDG Toolkit</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: Inter & Comic Neue -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Phosphor Icons for UI elements -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Combined Custom Styles -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        /* Styles for Generator & Modal */
+        #one-liner-text, #one-liner-modal-content {
+            font-family: 'Comic Neue', cursive;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Styles for Skill Builder */
         .progress-bar-fill {
             transition: width 0.5s ease-in-out;
         }
@@ -34,339 +47,531 @@
         #feedback-section {
             transition: bottom 0.3s ease-in-out;
         }
-        /* Styles for the new one-liner bubble and modal */
         #one-liner-bubble {
             transition: transform 0.2s ease-in-out;
         }
         #one-liner-bubble:hover {
             transform: scale(1.1);
         }
-        #one-liner-modal-content {
-            font-family: 'Comic Neue', cursive;
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .nav-button {
+            transition: all 0.2s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 min-h-screen">
 
-    <div id="game-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
-        
-        <!-- Game Header -->
-        <header class="flex items-center gap-4 mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">IDG Skill Builder</h1>
-            <div class="w-full bg-gray-200 rounded-full h-4">
-                <div id="progress-bar" class="bg-green-500 h-4 rounded-full progress-bar-fill" style="width: 0%;"></div>
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex items-center justify-center h-16">
+                <div class="flex items-center space-x-2 bg-gray-200 p-1 rounded-full">
+                    <button id="nav-generator" class="nav-button px-4 py-2 text-sm font-semibold rounded-full">Content Generator</button>
+                    <button id="nav-builder" class="nav-button px-4 py-2 text-sm font-semibold rounded-full">Skill Builder</button>
+                </div>
             </div>
-        </header>
+        </div>
+    </nav>
 
-        <!-- Main Game Content -->
-        <div id="game-content">
-            <h2 class="text-lg font-semibold text-gray-700 mb-2">Which skill is being used?</h2>
-            <p id="scenario-text" class="text-gray-600 text-xl mb-6 min-h-[100px]"></p>
-            
-            <div id="options-container" class="space-y-3">
-                <!-- Options will be dynamically inserted here -->
+    <!-- Main Content Area -->
+    <main class="flex items-start justify-center p-4 pt-8">
+
+        <!-- Page 1: Content Generator -->
+        <div id="page-generator" class="w-full">
+            <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
+                <header class="mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">IDG Content Generator</h1>
+                    <p class="text-gray-500">Generate one-liners and captions for all 23 skills.</p>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-left">
+                    <div>
+                        <label for="dimension-select" class="block text-sm font-medium text-gray-700 mb-2">1. Choose a Dimension:</label>
+                        <select id="dimension-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="random">Random Dimension</option>
+                            <option value="Being">Being</option>
+                            <option value="Thinking">Thinking</option>
+                            <option value="Relating">Relating</option>
+                            <option value="Collaborating">Collaborating</option>
+                            <option value="Acting">Acting</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="skill-select" class="block text-sm font-medium text-gray-700 mb-2">2. Choose a Skill:</label>
+                        <select id="skill-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" disabled>
+                            <option value="random">Random Skill</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center mb-6">
+                    <p id="one-liner-text" class="text-2xl md:text-3xl text-gray-800 mb-2 fade-in">"I'll listen to understand, not just to reply."</p>
+                    <p id="skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full fade-in">Communication Skills</p>
+                </div>
+                <div class="text-left">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Generated Caption:</label>
+                    <div class="relative w-full">
+                        <p id="caption-text" class="w-full bg-gray-100 rounded-md p-4 text-gray-700 text-sm border border-gray-200 min-h-[80px]"></p>
+                        <button id="copy-btn" class="absolute top-2 right-2 bg-white p-2 rounded-md text-gray-500 hover:bg-gray-200 hover:text-gray-700">
+                            <i class="ph ph-copy text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Generate New
+                </button>
             </div>
-
-            <button id="check-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">
-                Check
-            </button>
         </div>
 
-        <!-- Completion Screen -->
-        <div id="completion-screen" class="hidden text-center py-12">
-            <i class="ph-sparkle text-7xl text-yellow-500"></i>
-            <h2 class="text-3xl font-extrabold text-gray-800 mt-4">Great Job!</h2>
-            <p class="text-gray-600 mt-2">You've completed the challenge.</p>
-            <p id="score-text" class="text-lg font-semibold mt-4"></p>
-            <button id="restart-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors">
-                Play Again
-            </button>
-        </div>
-
-    </div>
-
-    <!-- Feedback Section (Slides up from bottom) -->
-    <div id="feedback-section" class="fixed bottom-[-100%] left-0 w-full p-6 rounded-t-2xl shadow-2xl transition-all" style="min-height: 150px;">
-        <div class="flex items-center mb-3">
-            <i id="feedback-icon" class="text-3xl mr-3"></i>
-            <h3 id="feedback-title" class="text-2xl font-bold"></h3>
-        </div>
-        <p id="feedback-explanation" class="text-lg"></p>
-        <button id="continue-btn" class="w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors">
-            Continue
-        </button>
-    </div>
-
-    <!-- One-Liner Generator Modal (Initially Hidden) -->
-    <div id="one-liner-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center relative">
-            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-                <i class="ph-x-bold text-2xl"></i>
-            </button>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4" style="font-family: 'Inter', sans-serif;">IDG One-Liner</h2>
-            <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center">
-                <p id="one-liner-modal-content" class="text-2xl md:text-3xl text-gray-800 mb-2">...</p>
-                <p id="one-liner-skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full" style="font-family: 'Inter', sans-serif;">...</p>
+        <!-- Page 2: Skill Builder -->
+        <div id="page-builder" class="hidden w-full">
+             <div id="game-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
+                <header class="flex items-center gap-4 mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800">IDG Skill Builder</h1>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="progress-bar" class="bg-green-500 h-4 rounded-full progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </header>
+                <div id="game-content">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Which skill is being used?</h2>
+                    <p id="scenario-text" class="text-gray-600 text-xl mb-6 min-h-[100px]"></p>
+                    <div id="options-container" class="space-y-3"></div>
+                    <button id="check-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">
+                        Check
+                    </button>
+                </div>
+                <div id="completion-screen" class="hidden text-center py-12">
+                    <i class="ph-sparkle text-7xl text-yellow-500"></i>
+                    <h2 class="text-3xl font-extrabold text-gray-800 mt-4">Great Job!</h2>
+                    <p class="text-gray-600 mt-2">You've completed the challenge.</p>
+                    <p id="score-text" class="text-lg font-semibold mt-4"></p>
+                    <button id="restart-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors">
+                        Play Again
+                    </button>
+                </div>
             </div>
-            <button id="generate-new-liner-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105" style="font-family: 'Inter', sans-serif;">
-                Generate New
+            <div id="feedback-section" class="fixed bottom-[-100%] left-0 w-full p-6 rounded-t-2xl shadow-2xl transition-all" style="min-height: 150px;">
+                <div class="flex items-center mb-3">
+                    <i id="feedback-icon" class="text-3xl mr-3"></i>
+                    <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+                </div>
+                <p id="feedback-explanation" class="text-lg"></p>
+                <button id="continue-btn" class="w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors">
+                    Continue
+                </button>
+            </div>
+            <div id="one-liner-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center relative">
+                    <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                        <i class="ph-x-bold text-2xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4" style="font-family: 'Inter', sans-serif;">IDG One-Liner</h2>
+                    <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center">
+                        <p id="one-liner-modal-content" class="text-2xl md:text-3xl text-gray-800 mb-2">...</p>
+                        <p id="one-liner-skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full" style="font-family: 'Inter', sans-serif;">...</p>
+                    </div>
+                    <button id="generate-new-liner-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105" style="font-family: 'Inter', sans-serif;">
+                        Generate New
+                    </button>
+                </div>
+            </div>
+            <button id="one-liner-bubble" class="fixed bottom-6 right-6 bg-yellow-400 h-16 w-16 rounded-full flex items-center justify-center shadow-lg text-yellow-800 z-40">
+                <i class="ph-lightbulb-fill text-4xl"></i>
             </button>
         </div>
-    </div>
-
-    <!-- Clickable Bubble for One-Liner -->
-    <button id="one-liner-bubble" class="fixed bottom-6 right-6 bg-yellow-400 h-16 w-16 rounded-full flex items-center justify-center shadow-lg text-yellow-800 z-40">
-        <i class="ph-lightbulb-fill text-4xl"></i>
-    </button>
-
+    </main>
 
     <script>
-        const idgOneLiners = {
+        // --- SINGLE SOURCE OF TRUTH FOR DATA ---
+        const IDG_TOOLKIT_DATA = {
             "Being": {
-                "Inner Compass": ["Even when no one's watching, I'll do what's right.", "My values guide my choices, not the crowd.", "This doesn't feel right, so I'm not doing it."],
-                "Integrity & Authenticity": ["I'll admit I made a mistake here.", "What you see is what you get with me.", "I meant what I said, and I'll stand by it."],
-                "Openness & Learning Mindset": ["I might be wrong about this, what do you think?", "That's a new idea to me, tell me more!", "Failure isn't an endpoint, it's data."],
-                "Self-awareness": ["I'm feeling defensive, I need a moment.", "I know I procrastinate when I'm feeling overwhelmed.", "I'm not the best person for this task, but I can support someone who is."],
-                "Presence": ["I'm putting my phone away to give you my full attention.", "Right here, right now, what's most important?", "Let's pause the hypotheticals and focus on the current situation."]
+                "Inner Compass": {
+                    oneLiners: ["Even when no one's watching, I'll do what's right.", "My values guide my choices, not the crowd.", "This doesn't feel right, so I'm not doing it."],
+                    captions: ["What's one value you refuse to compromise on? Your Inner Compass is your guide when the path isn't clear. #InnerDevelopmentGoals #Values", "Making decisions based on your deepest values isn't always easy, but it's always worth it. How do you stay true to your Inner Compass? #IDG #Integrity"]
+                },
+                "Integrity & Authenticity": {
+                    oneLiners: ["I'll admit I made a mistake here.", "What you see is what you get with me.", "I meant what I said, and I'll stand by it."],
+                    captions: ["Authenticity isn't about being perfect, it's about being real. When was the last time you chose vulnerability over pretending? #Authenticity #IDG", "True integrity is when your words, actions, and values are all in alignment. It's a practice, not a destination. #InnerDevelopmentGoals"]
+                },
+                "Openness & Learning Mindset": {
+                    oneLiners: ["I might be wrong about this, what do you think?", "That's a new idea to me, tell me more!", "Failure isn't an endpoint, it's data."],
+                    captions: ["The most successful people are often the most curious. What's something new you learned today that challenged your perspective? #GrowthMindset #IDG", "An open mind is a superpower. It allows you to see possibilities where others see dead ends. #LearnEveryDay #InnerDevelopmentGoals"]
+                },
+                "Self-awareness": {
+                    oneLiners: ["I'm feeling defensive, I need a moment.", "I know I procrastinate when I'm feeling overwhelmed.", "I'm not the best person for this task, but I can support someone who is."],
+                    captions: ["Knowing yourself is the beginning of all wisdom. What's one thing you've learned about your own patterns recently? #SelfAwareness #IDG", "Your emotions are data, not directives. Pausing to notice how you feel before you react is a game-changer. #EmotionalIntelligence #InnerDevelopmentGoals"]
+                },
+                "Presence": {
+                    oneLiners: ["I'm putting my phone away to give you my full attention.", "Right here, right now, what's most important?", "Let's pause the hypotheticals and focus on the current situation."],
+                    captions: ["The greatest gift you can give someone is your full presence. How do you practice being 'here and now' in a world of distractions? #Mindfulness #IDG", "Are you truly here, or is your mind in your inbox? Being present is a skill that deepens every interaction. #Presence #InnerDevelopmentGoals"]
+                }
             },
             "Thinking": {
-                "Critical Thinking": ["Let's check the source of that information.", "Is that a fact, or is that an opinion?", "What are the assumptions we're making here?"],
-                "Complexity Awareness": ["This problem isn't simple; all these parts are connected.", "Changing one thing here will have ripple effects over there.", "There's no single 'right' answer, only trade-offs."],
-                "Perspective Skills": ["Let me try to see this from your point of view.", "What if the 'villain' in this story is actually the hero in theirs?", "Before I decide, I want to hear from someone who disagrees with me."],
-                "Sense-making": ["Okay, there's chaos, but I'm starting to see a pattern.", "Let's map this out to see how everything connects.", "This mess of data is actually telling a simple story."],
-                "Long-term Orientation & Visioning": ["Will this decision still look good in 10 years?", "Let's solve the root cause, not just the symptom.", "We're planting a tree today for future generations to enjoy."]
+                "Critical Thinking": {
+                    oneLiners: ["Let's check the source of that information.", "Is that a fact, or is that an opinion?", "What are the assumptions we're making here?"],
+                    captions: ["Don't just consume information, question it. A healthy dose of skepticism is essential in today's world. What's your go-to critical thinking question? #CriticalThinking #IDG", "Thinking critically means thinking for yourself. It's about looking beyond the surface and asking 'why'. #ThinkSmarter #InnerDevelopmentGoals"]
+                },
+                "Complexity Awareness": {
+                    oneLiners: ["This problem isn't simple; all these parts are connected.", "Changing one thing here will have ripple effects over there.", "There's no single 'right' answer, only trade-offs."],
+                    captions: ["The world isn't black and white. Embracing complexity means seeing the connections and patterns that others miss. #SystemsThinking #IDG", "Simple answers to complex problems are usually wrong. The skill is in holding the tension of multiple truths at once. #Complexity #InnerDevelopmentGoals"]
+                },
+                "Perspective Skills": {
+                    oneLiners: ["Let me try to see this from your point of view.", "What if the 'villain' in this story is actually the hero in theirs?", "Before I decide, I want to hear from someone who disagrees with me."],
+                    captions: ["You don't have to agree with someone to understand their perspective. The most innovative solutions come from seeing the problem from all sides. #Perspective #IDG", "Your viewpoint is just one piece of the puzzle. Who can you talk to today to see a bigger picture? #Empathy #InnerDevelopmentGoals"]
+                },
+                "Sense-making": {
+                    oneLiners: ["Okay, there's chaos, but I'm starting to see a pattern.", "Let's map this out to see how everything connects.", "This mess of data is actually telling a simple story."],
+                    captions: ["In a world of information overload, sense-making is the skill of finding the signal in the noise. How do you make sense of chaos? #Clarity #IDG", "Connecting the dots is a creative act. It's about structuring the unknown and creating a narrative that helps us move forward. #SenseMaking #InnerDevelopmentGoals"]
+                },
+                "Long-term Orientation & Visioning": {
+                    oneLiners: ["Will this decision still look good in 10 years?", "Let's solve the root cause, not just the symptom.", "We're planting a tree today for future generations to enjoy."],
+                    captions: ["Are we playing the short game or the long game? True impact comes from making decisions today that will serve the future. #Vision #IDG", "A clear vision acts like a compass, guiding you through the ups and downs. What's the long-term vision you're committed to? #Legacy #InnerDevelopmentGoals"]
+                }
             },
             "Relating": {
-                "Appreciation": ["I'm genuinely grateful for the effort you put into this.", "This is a beautiful moment, let's just enjoy it.", "Thank you, I really value your contribution."],
-                "Connectedness": ["When you succeed, it feels like we all succeed.", "We're all part of this ecosystem, what affects one affects us all.", "This isn't 'us vs. them,' it's just 'us'."],
-                "Humility": ["I don't have all the answers, I need your help.", "Let the best idea win, it doesn't have to be mine.", "My title is less important than the work we need to do."],
-                "Empathy & Compassion": ["It sounds like you're having a really tough day.", "I can imagine how frustrating that must feel.", "How can I support you through this?"]
+                "Appreciation": {
+                    oneLiners: ["I'm genuinely grateful for the effort you put into this.", "This is a beautiful moment, let's just enjoy it.", "Thank you, I really value your contribution."],
+                    captions: ["What we appreciate, appreciates. Who is one person you can show genuine gratitude for today? #Gratitude #IDG", "Appreciation is more than just saying 'thanks'. It's about truly seeing and valuing the good in people and the world. #Appreciation #InnerDevelopmentGoals"]
+                },
+                "Connectedness": {
+                    oneLiners: ["When you succeed, it feels like we all succeed.", "We're all part of this ecosystem, what affects one affects us all.", "This isn't 'us vs. them,' it's just 'us'."],
+                    captions: ["We are more connected than we are separate. How can we act in a way that honors our shared humanity and planet? #Connectedness #IDG", "That feeling of being part of something bigger than yourself? That's connectedness. It's the root of compassion and collective action. #WeAreOne #InnerDevelopmentGoals"]
+                },
+                "Humility": {
+                    oneLiners: ["I don't have all the answers, I need your help.", "Let the best idea win, it doesn't have to be mine.", "My title is less important than the work we need to do."],
+                    captions: ["Humility isn't thinking less of yourself, it's thinking of yourself less. It's the gateway to true collaboration. #Humility #IDG", "Being able to say 'I don't know' is a sign of strength, not weakness. It opens the door for others to contribute their wisdom. #Leadership #InnerDevelopmentGoals"]
+                },
+                "Empathy & Compassion": {
+                    oneLiners: ["It sounds like you're having a really tough day.", "I can imagine how frustrating that must feel.", "How can I support you through this?"],
+                    captions: ["Empathy is feeling *with* people. Compassion is acting on that feeling. The world needs more of both. #Empathy #IDG", "Before you judge, get curious. Everyone is fighting a battle you know nothing about. A little compassion goes a long way. #Kindness #InnerDevelopmentGoals"]
+                }
             },
             "Collaborating": {
-                "Communication Skills": ["Let me rephrase that to make sure I understand you correctly.", "I'll listen to understand, not just to reply.", "Let's talk this through, face-to-face."],
-                "Co-creation Skills": ["My idea is just a starting point, let's build on it together.", "How can we combine our skills to create something new?", "This is our shared project, everyone's input matters."],
-                "Inclusive Mindset": ["Whose voice is missing from this conversation?", "We need diverse perspectives to get this right.", "Let's make sure everyone feels they can contribute safely."],
-                "Trust": ["I trust your judgment on this, you're the expert.", "I'll be transparent about my process so you're always in the loop.", "You can count on me to do what I said I would do."],
-                "Mobilization Skills": ["This is what we can achieve if we all work together!", "I have a vision, who wants to help me build it?", "Your unique skill is exactly what this movement needs."]
+                "Communication Skills": {
+                    oneLiners: ["Let me rephrase that to make sure I understand you correctly.", "I'll listen to understand, not just to reply.", "Let's talk this through, face-to-face."],
+                    captions: ["The biggest communication problem is we do not listen to understand, we listen to reply. Let's change that. #Communication #IDG", "Clear, kind, and honest communication is the bedrock of any healthy relationship, at work and at home. #ListenWell #InnerDevelopmentGoals"]
+                },
+                "Co-creation Skills": {
+                    oneLiners: ["My idea is just a starting point, let's build on it together.", "How can we combine our skills to create something new?", "This is our shared project, everyone's input matters."],
+                    captions: ["None of us is as smart as all of us. Co-creation is about building something together that no one could build alone. #Collaboration #IDG", "What amazing things could you create if you invited others into the process? The magic happens in the 'and'. #Teamwork #InnerDevelopmentGoals"]
+                },
+                "Inclusive Mindset": {
+                    oneLiners: ["Whose voice is missing from this conversation?", "We need diverse perspectives to get this right.", "Let's make sure everyone feels they can contribute safely."],
+                    captions: ["Diversity is a fact, inclusion is a choice. An inclusive mindset actively seeks out and values the voices that are often unheard. #Inclusion #IDG", "Great ideas can come from anywhere. Is your table big enough for everyone? #DiversityandInclusion #InnerDevelopmentGoals"]
+                },
+                "Trust": {
+                    oneLiners: ["I trust your judgment on this, you're the expert.", "I'll be transparent about my process so you're always in the loop.", "You can count on me to do what I said I would do."],
+                    captions: ["Trust is built in tiny moments: doing what you say you'll do, being transparent, and assuming good intent. #Trust #IDG", "You can't have collaboration without trust. It's the psychological safety that allows teams to take risks and be brilliant. #Leadership #InnerDevelopmentGoals"]
+                },
+                "Mobilization Skills": {
+                    oneLiners: ["This is what we can achieve if we all work together!", "I have a vision, who wants to help me build it?", "Your unique skill is exactly what this movement needs."],
+                    captions: ["A powerful vision can mobilize people to achieve the impossible. What's a cause that you would rally people for? #Leadership #IDG", "Mobilizing others isn't about commanding, it's about inspiring. It's inviting people into a story where they can play a meaningful part. #Community #InnerDevelopmentGoals"]
+                }
             },
             "Acting": {
-                "Courage": ["This is scary, but it's too important not to try.", "I will speak up, even if my voice shakes.", "Let's be the first ones to do this."],
-                "Creativity": ["What if we just ignored the rules for a moment?", "Let's try the weirdest idea first.", "There has to be another way to look at this problem."],
-                "Optimism": ["It's going to be hard, but I know we can figure it out.", "Look at the progress we've already made!", "I see a possibility here, not just a problem."],
-                "Perseverance": ["Okay, that didn't work. Let's try again tomorrow.", "I'm not giving up on this goal.", "This is a marathon, not a sprint."]
+                "Courage": {
+                    oneLiners: ["This is scary, but it's too important not to try.", "I will speak up, even if my voice shakes.", "Let's be the first ones to do this."],
+                    captions: ["Courage is not the absence of fear, but acting in spite of it. What's one small act of courage you can take today? #Courage #IDG", "The world is changed by people who were brave enough to take the first step. Be one of them. #BeBrave #InnerDevelopmentGoals"]
+                },
+                "Creativity": {
+                    oneLiners: ["What if we just ignored the rules for a moment?", "Let's try the weirdest idea first.", "There has to be another way to look at this problem."],
+                    captions: ["Creativity is intelligence having fun. How can you break a pattern or challenge a convention in your work today? #Creativity #IDG", "You don't have to be an artist to be creative. It's about connecting ideas in new ways to solve problems. #Innovation #InnerDevelopmentGoals"]
+                },
+                "Optimism": {
+                    oneLiners: ["It's going to be hard, but I know we can figure it out.", "Look at the progress we've already made!", "I see a possibility here, not just a problem."],
+                    captions: ["Optimism isn't blind positivity. It's a resilient belief in a better future and in our power to create it. #Optimism #IDG", "What you focus on grows. Choosing to see the possibilities, even amidst challenges, is a powerful form of leadership. #Hope #InnerDevelopmentGoals"]
+                },
+                "Perseverance": {
+                    oneLiners: ["Okay, that didn't work. Let's try again tomorrow.", "I'm not giving up on this goal.", "This is a marathon, not a sprint."],
+                    captions: ["The journey to anything worthwhile is filled with setbacks. Perseverance is the skill of getting back up, again and again. #Resilience #IDG", "Success is not final, failure is not fatal: it is the courage to continue that counts. #Perseverance #InnerDevelopmentGoals"]
+                }
             }
         };
 
         const gameData = [
-            {
-                scenario: "Your team is stuck. Instead of pushing your own idea, you ask, 'What if we looked at this from the customer's perspective?'",
-                options: ["Courage", "Perspective Skills", "Perseverance"],
-                correctAnswer: "Perspective Skills",
-                explanation: "By actively seeking a different viewpoint, you are using your Perspective Skills to unlock new solutions."
-            },
-            {
-                scenario: "You receive critical feedback on a project. Instead of getting defensive, you pause, take a breath, and ask for more details.",
-                options: ["Creativity", "Self-awareness", "Optimism"],
-                correctAnswer: "Self-awareness",
-                explanation: "Recognizing your emotional reaction and choosing to respond thoughtfully is a key part of Self-awareness."
-            },
-            {
-                scenario: "A colleague from a different culture communicates very directly. You remind yourself that communication styles vary and focus on their message.",
-                options: ["Inclusive Mindset", "Co-creation Skills", "Critical Thinking"],
-                correctAnswer: "Inclusive Mindset",
-                explanation: "Embracing and adapting to different cultural norms is a core part of having an Inclusive Mindset."
-            },
-            {
-                scenario: "A community project is taking much longer than expected. Instead of giving up, you remind the team of the long-term vision and break the work into smaller steps.",
-                options: ["Humility", "Perseverance", "Appreciation"],
-                correctAnswer: "Perseverance",
-                explanation: "Sustaining engagement and remaining determined, even when things are difficult, is the essence of Perseverance."
-            },
-            {
-                scenario: "During a brainstorm, you suggest a wild idea that might not work, just to encourage others to think outside the box.",
-                options: ["Trust", "Connectedness", "Creativity"],
-                correctAnswer: "Creativity",
-                explanation: "Generating original ideas and disrupting conventional patterns to foster innovation is a key aspect of Creativity."
-            }
+             { scenario: "Your team is stuck. Instead of pushing your own idea, you ask, 'What if we looked at this from the customer's perspective?'", options: ["Courage", "Perspective Skills", "Perseverance"], correctAnswer: "Perspective Skills", explanation: "By actively seeking a different viewpoint, you are using your Perspective Skills to unlock new solutions." },
+             { scenario: "You receive critical feedback on a project. Instead of getting defensive, you pause, take a breath, and ask for more details.", options: ["Creativity", "Self-awareness", "Optimism"], correctAnswer: "Self-awareness", explanation: "Recognizing your emotional reaction and choosing to respond thoughtfully is a key part of Self-awareness." },
+             { scenario: "A colleague from a different culture communicates very directly. You remind yourself that communication styles vary and focus on their message.", options: ["Inclusive Mindset", "Co-creation Skills", "Critical Thinking"], correctAnswer: "Inclusive Mindset", explanation: "Embracing and adapting to different cultural norms is a core part of having an Inclusive Mindset." },
+             { scenario: "A community project is taking much longer than expected. Instead of giving up, you remind the team of the long-term vision and break the work into smaller steps.", options: ["Humility", "Perseverance", "Appreciation"], correctAnswer: "Perseverance", explanation: "Sustaining engagement and remaining determined, even when things are difficult, is the essence of Perseverance." },
+             { scenario: "During a brainstorm, you suggest a wild idea that might not work, just to encourage others to think outside the box.", options: ["Trust", "Connectedness", "Creativity"], correctAnswer: "Creativity", explanation: "Generating original ideas and disrupting conventional patterns to foster innovation is a key aspect of Creativity." }
         ];
 
-        // DOM Elements
-        const progressBar = document.getElementById('progress-bar');
-        const scenarioText = document.getElementById('scenario-text');
-        const optionsContainer = document.getElementById('options-container');
-        const checkBtn = document.getElementById('check-btn');
-        const feedbackSection = document.getElementById('feedback-section');
-        const feedbackIcon = document.getElementById('feedback-icon');
-        const feedbackTitle = document.getElementById('feedback-title');
-        const feedbackExplanation = document.getElementById('feedback-explanation');
-        const continueBtn = document.getElementById('continue-btn');
-        const gameContent = document.getElementById('game-content');
-        const completionScreen = document.getElementById('completion-screen');
-        const scoreText = document.getElementById('score-text');
-        const restartBtn = document.getElementById('restart-btn');
+        // --- SCOPED LOGIC FOR CONTENT GENERATOR ---
+        (() => {
+            const oneLinerText = document.getElementById('one-liner-text');
+            const skillTag = document.getElementById('skill-tag');
+            const captionText = document.getElementById('caption-text');
+            const copyBtn = document.getElementById('copy-btn');
+            const generateBtn = document.getElementById('generate-btn');
+            const dimensionSelect = document.getElementById('dimension-select');
+            const skillSelect = document.getElementById('skill-select');
 
-        // New DOM elements for the One-Liner Modal
-        const oneLinerModal = document.getElementById('one-liner-modal');
-        const oneLinerBubble = document.getElementById('one-liner-bubble');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const generateNewLinerBtn = document.getElementById('generate-new-liner-btn');
-        const oneLinerModalContent = document.getElementById('one-liner-modal-content');
-        const oneLinerSkillTag = document.getElementById('one-liner-skill-tag');
-
-
-        // Game State
-        let currentQuestionIndex = 0;
-        let selectedAnswer = null;
-        let score = 0;
-        let questions = [];
-
-        // --- Game Logic ---
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function startGame() {
-            currentQuestionIndex = 0;
-            score = 0;
-            selectedAnswer = null;
-            questions = shuffleArray([...gameData]);
-            gameContent.style.display = 'block';
-            completionScreen.style.display = 'none';
-            updateProgressBar();
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            checkBtn.disabled = true;
-            const currentQuestion = questions[currentQuestionIndex];
-            scenarioText.textContent = currentQuestion.scenario;
-            optionsContainer.innerHTML = '';
-
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.classList.add('w-full', 'text-left', 'p-4', 'border-2', 'border-gray-300', 'rounded-xl', 'font-semibold', 'text-gray-700', 'hover:bg-gray-50', 'option-card');
-                button.onclick = () => selectOption(button, option);
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        function selectOption(button, option) {
-            // Remove 'selected' from all other options
-            Array.from(optionsContainer.children).forEach(child => {
-                child.classList.remove('selected');
-            });
-
-            // Add 'selected' to the clicked option
-            button.classList.add('selected');
-            selectedAnswer = option;
-            checkBtn.disabled = false;
-        }
-
-        function checkAnswer() {
-            const currentQuestion = questions[currentQuestionIndex];
-            const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-
-            if (isCorrect) {
-                score++;
-                feedbackTitle.textContent = "Correct!";
-                feedbackIcon.className = 'ph-check-circle text-green-500';
-                feedbackSection.style.backgroundColor = '#D1FAE5'; // bg-green-100
-                feedbackExplanation.style.color = '#065F46'; // text-green-800
-                continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-green-500 text-white hover:bg-green-600';
-            } else {
-                feedbackTitle.textContent = "Not quite...";
-                feedbackIcon.className = 'ph-x-circle text-red-500';
-                feedbackSection.style.backgroundColor = '#FEE2E2'; // bg-red-100
-                feedbackExplanation.style.color = '#991B1B'; // text-red-800
-                continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-red-500 text-white hover:bg-red-600';
+            function populateSkillsDropdown() {
+                const selectedDimension = dimensionSelect.value;
+                skillSelect.innerHTML = '<option value="random">Random Skill</option>';
+                if (selectedDimension !== 'random') {
+                    const skills = Object.keys(IDG_TOOLKIT_DATA[selectedDimension]);
+                    skills.forEach(skill => {
+                        const option = document.createElement('option');
+                        option.value = skill;
+                        option.textContent = skill;
+                        skillSelect.appendChild(option);
+                    });
+                    skillSelect.disabled = false;
+                } else {
+                    skillSelect.disabled = true;
+                }
             }
 
-            feedbackExplanation.textContent = currentQuestion.explanation;
-            feedbackSection.style.bottom = '0';
-        }
+            function generateContent() {
+                let selectedDimension = dimensionSelect.value;
+                let selectedSkill = skillSelect.value;
+                let dimension, skillName;
 
-        function continueGame() {
-            feedbackSection.style.bottom = '-100%';
-            currentQuestionIndex++;
-            selectedAnswer = null;
+                if (selectedDimension === 'random') {
+                    const dimensions = Object.keys(IDG_TOOLKIT_DATA);
+                    dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
+                } else {
+                    dimension = selectedDimension;
+                }
+                
+                if (selectedSkill === 'random' || selectedDimension === 'random') {
+                    const skills = Object.keys(IDG_TOOLKIT_DATA[dimension]);
+                    skillName = skills[Math.floor(Math.random() * skills.length)];
+                } else {
+                    skillName = selectedSkill;
+                }
+                
+                const skillData = IDG_TOOLKIT_DATA[dimension][skillName];
+                const randomOneLiner = skillData.oneLiners[Math.floor(Math.random() * skillData.oneLiners.length)];
+                const randomCaption = skillData.captions[Math.floor(Math.random() * skillData.captions.length)];
+
+                [oneLinerText, skillTag, captionText].forEach(el => el.classList.remove('fade-in'));
+                void oneLinerText.offsetWidth;
+                
+                oneLinerText.textContent = `"${randomOneLiner}"`;
+                skillTag.textContent = skillName;
+                captionText.textContent = randomCaption;
+                
+                [oneLinerText, skillTag, captionText].forEach(el => el.classList.add('fade-in'));
+            }
             
-            updateProgressBar();
+            copyBtn.addEventListener('click', () => {
+                // Using document.execCommand for wider compatibility in sandboxed environments
+                const textarea = document.createElement('textarea');
+                textarea.value = captionText.textContent;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    const originalIcon = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="ph ph-check text-lg text-green-500"></i>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalIcon;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
+                }
+                document.body.removeChild(textarea);
+            });
 
-            if (currentQuestionIndex < questions.length) {
+            dimensionSelect.addEventListener('change', () => {
+                populateSkillsDropdown();
+                generateContent();
+            });
+            skillSelect.addEventListener('change', generateContent);
+            generateBtn.addEventListener('click', generateContent);
+
+            // Expose init functions for the main controller
+            window.initGenerator = () => {
+                 populateSkillsDropdown();
+                 generateContent();
+            };
+        })();
+
+
+        // --- SCOPED LOGIC FOR SKILL BUILDER ---
+        (() => {
+            const progressBar = document.getElementById('progress-bar');
+            const scenarioText = document.getElementById('scenario-text');
+            const optionsContainer = document.getElementById('options-container');
+            const checkBtn = document.getElementById('check-btn');
+            const feedbackSection = document.getElementById('feedback-section');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackExplanation = document.getElementById('feedback-explanation');
+            const continueBtn = document.getElementById('continue-btn');
+            const gameContent = document.getElementById('game-content');
+            const completionScreen = document.getElementById('completion-screen');
+            const scoreText = document.getElementById('score-text');
+            const restartBtn = document.getElementById('restart-btn');
+            const oneLinerModal = document.getElementById('one-liner-modal');
+            const oneLinerBubble = document.getElementById('one-liner-bubble');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const generateNewLinerBtn = document.getElementById('generate-new-liner-btn');
+            const oneLinerModalContent = document.getElementById('one-liner-modal-content');
+            const oneLinerSkillTag = document.getElementById('one-liner-skill-tag');
+
+            let currentQuestionIndex = 0;
+            let selectedAnswer = null;
+            let score = 0;
+            let questions = [];
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            function startGame() {
+                currentQuestionIndex = 0;
+                score = 0;
+                selectedAnswer = null;
+                questions = shuffleArray([...gameData]);
+                gameContent.style.display = 'block';
+                completionScreen.style.display = 'none';
+                feedbackSection.style.bottom = '-100%';
+                updateProgressBar();
                 loadQuestion();
-            } else {
-                showCompletionScreen();
             }
-        }
-        
-        function updateProgressBar() {
-             const progress = (currentQuestionIndex / questions.length) * 100;
-             progressBar.style.width = `${progress}%`;
-        }
 
-        function showCompletionScreen() {
-            gameContent.style.display = 'none';
-            completionScreen.style.display = 'block';
-            scoreText.textContent = `You scored ${score} out of ${questions.length}!`;
-            progressBar.style.width = '100%';
-        }
+            function loadQuestion() {
+                checkBtn.disabled = true;
+                const currentQuestion = questions[currentQuestionIndex];
+                scenarioText.textContent = currentQuestion.scenario;
+                optionsContainer.innerHTML = '';
+                currentQuestion.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('w-full', 'text-left', 'p-4', 'border-2', 'border-gray-300', 'rounded-xl', 'font-semibold', 'text-gray-700', 'hover:bg-gray-50', 'option-card');
+                    button.onclick = () => selectOption(button, option);
+                    optionsContainer.appendChild(button);
+                });
+            }
 
-        // --- One-Liner Generator Logic ---
-        function generateOneLiner() {
-            const dimensions = Object.keys(idgOneLiners);
-            const dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
-            const skills = idgOneLiners[dimension];
-            const skillNames = Object.keys(skills);
-            const randomSkillName = skillNames[Math.floor(Math.random() * skillNames.length)];
-            const oneLiners = skills[randomSkillName];
-            const randomOneLiner = oneLiners[Math.floor(Math.random() * oneLiners.length)];
+            function selectOption(button, option) {
+                Array.from(optionsContainer.children).forEach(child => child.classList.remove('selected'));
+                button.classList.add('selected');
+                selectedAnswer = option;
+                checkBtn.disabled = false;
+            }
 
-            // Add animation class
-            oneLinerModalContent.classList.remove('fade-in');
-            oneLinerSkillTag.classList.remove('fade-in');
-            void oneLinerModalContent.offsetWidth; // Trigger reflow
+            function checkAnswer() {
+                const currentQuestion = questions[currentQuestionIndex];
+                const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+                if (isCorrect) {
+                    score++;
+                    feedbackTitle.textContent = "Correct!";
+                    feedbackIcon.className = 'ph-check-circle text-3xl mr-3 text-green-500';
+                    feedbackSection.style.backgroundColor = '#D1FAE5';
+                    feedbackExplanation.style.color = '#065F46';
+                    continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-green-500 text-white hover:bg-green-600';
+                } else {
+                    feedbackTitle.textContent = "Not quite...";
+                    feedbackIcon.className = 'ph-x-circle text-3xl mr-3 text-red-500';
+                    feedbackSection.style.backgroundColor = '#FEE2E2';
+                    feedbackExplanation.style.color = '#991B1B';
+                    continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-red-500 text-white hover:bg-red-600';
+                }
+                feedbackExplanation.textContent = currentQuestion.explanation;
+                feedbackSection.style.bottom = '0';
+            }
 
-            oneLinerModalContent.textContent = `"${randomOneLiner}"`;
-            oneLinerSkillTag.textContent = randomSkillName;
+            function continueGame() {
+                feedbackSection.style.bottom = '-100%';
+                currentQuestionIndex++;
+                selectedAnswer = null;
+                updateProgressBar();
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    showCompletionScreen();
+                }
+            }
             
-            oneLinerModalContent.classList.add('fade-in');
-            oneLinerSkillTag.classList.add('fade-in');
-        }
-        
-        // --- Event Listeners ---
-        checkBtn.addEventListener('click', checkAnswer);
-        continueBtn.addEventListener('click', continueGame);
-        restartBtn.addEventListener('click', startGame);
+            function updateProgressBar() {
+                const progress = (currentQuestionIndex / questions.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
 
-        // New Event Listeners for the modal
-        oneLinerBubble.addEventListener('click', () => {
-            generateOneLiner(); // Generate a new one when opening
-            oneLinerModal.classList.remove('hidden');
+            function showCompletionScreen() {
+                gameContent.style.display = 'none';
+                completionScreen.style.display = 'block';
+                scoreText.textContent = `You scored ${score} out of ${questions.length}!`;
+                progressBar.style.width = '100%';
+            }
+
+            function generateOneLinerInModal() {
+                const dimensions = Object.keys(IDG_TOOLKIT_DATA);
+                const dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
+                const skills = IDG_TOOLKIT_DATA[dimension];
+                const skillNames = Object.keys(skills);
+                const randomSkillName = skillNames[Math.floor(Math.random() * skillNames.length)];
+                const oneLiners = skills[randomSkillName].oneLiners;
+                const randomOneLiner = oneLiners[Math.floor(Math.random() * oneLiners.length)];
+
+                oneLinerModalContent.classList.remove('fade-in');
+                oneLinerSkillTag.classList.remove('fade-in');
+                void oneLinerModalContent.offsetWidth;
+
+                oneLinerModalContent.textContent = `"${randomOneLiner}"`;
+                oneLinerSkillTag.textContent = randomSkillName;
+                
+                oneLinerModalContent.classList.add('fade-in');
+                oneLinerSkillTag.classList.add('fade-in');
+            }
+            
+            checkBtn.addEventListener('click', checkAnswer);
+            continueBtn.addEventListener('click', continueGame);
+            restartBtn.addEventListener('click', startGame);
+            oneLinerBubble.addEventListener('click', () => {
+                generateOneLinerInModal();
+                oneLinerModal.classList.remove('hidden');
+            });
+            closeModalBtn.addEventListener('click', () => oneLinerModal.classList.add('hidden'));
+            generateNewLinerBtn.addEventListener('click', generateOneLinerInModal);
+            
+            // Expose init function for main controller
+            window.initBuilder = startGame;
+        })();
+
+
+        // --- MAIN NAVIGATION CONTROLLER ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const navGenerator = document.getElementById('nav-generator');
+            const navBuilder = document.getElementById('nav-builder');
+            const pageGenerator = document.getElementById('page-generator');
+            const pageBuilder = document.getElementById('page-builder');
+            const oneLinerBubble = document.getElementById('one-liner-bubble');
+
+            function showGenerator() {
+                pageGenerator.classList.remove('hidden');
+                pageBuilder.classList.add('hidden');
+                oneLinerBubble.classList.add('hidden'); // Hide bubble on generator page
+                navGenerator.classList.add('bg-blue-600', 'text-white');
+                navGenerator.classList.remove('bg-transparent', 'text-gray-600');
+                navBuilder.classList.add('bg-transparent', 'text-gray-600');
+                navBuilder.classList.remove('bg-blue-600', 'text-white');
+            }
+
+            function showBuilder() {
+                pageGenerator.classList.add('hidden');
+                pageBuilder.classList.remove('hidden');
+                oneLinerBubble.classList.remove('hidden'); // Show bubble on builder page
+                navBuilder.classList.add('bg-blue-600', 'text-white');
+                navBuilder.classList.remove('bg-transparent', 'text-gray-600');
+                navGenerator.classList.add('bg-transparent', 'text-gray-600');
+                navGenerator.classList.remove('bg-blue-600', 'text-white');
+                window.initBuilder(); // Start the game when switching to this tab
+            }
+
+            navGenerator.addEventListener('click', showGenerator);
+            navBuilder.addEventListener('click', showBuilder);
+
+            // Initial state on load
+            window.initGenerator();
+            showGenerator();
         });
-        closeModalBtn.addEventListener('click', () => {
-            oneLinerModal.classList.add('hidden');
-        });
-        generateNewLinerBtn.addEventListener('click', generateOneLiner);
-
-
-        // --- Initial Start ---
-        startGame();
 
     </script>
-
 </body>
 </html>
-
