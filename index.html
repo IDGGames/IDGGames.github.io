@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDG Toolkit</title>
+    <title>IDG Content Generator</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Comic Neue -->
+    <!-- Google Fonts: Inter & Comic Neue for a playful feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Combined Custom Styles -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
-        /* Styles for Generator & Modal */
-        #one-liner-text, #one-liner-modal-content {
+        #one-liner-text {
             font-family: 'Comic Neue', cursive;
         }
         .fade-in {
@@ -29,549 +26,323 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Styles for Skill Builder */
-        .progress-bar-fill {
-            transition: width 0.5s ease-in-out;
-        }
-        .option-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-        }
-        .option-card:hover {
-            transform: translateY(-4px);
-        }
-        .option-card.selected {
-            background-color: #DBEAFE; /* bg-blue-100 */
-            border-color: #3B82F6; /* border-blue-500 */
-            color: #1E40AF; /* text-blue-800 */
-        }
-        #feedback-section {
-            transition: bottom 0.3s ease-in-out;
-        }
-        #one-liner-bubble {
-            transition: transform 0.2s ease-in-out;
-        }
-        #one-liner-bubble:hover {
-            transform: scale(1.1);
-        }
-        .nav-button {
-            transition: all 0.2s ease-in-out;
-        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <!-- Navigation -->
-    <nav class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="flex items-center justify-center h-16">
-                <div class="flex items-center space-x-2 bg-gray-200 p-1 rounded-full">
-                    <button id="nav-generator" class="nav-button px-4 py-2 text-sm font-semibold rounded-full">Content Generator</button>
-                    <button id="nav-builder" class="nav-button px-4 py-2 text-sm font-semibold rounded-full">Skill Builder</button>
-                </div>
+    <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
+        
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">IDG Content Generator</h1>
+            <p class="text-gray-500">Generate one-liners and captions for all 23 skills.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-left">
+            <div>
+                <label for="dimension-select" class="block text-sm font-medium text-gray-700 mb-2">1. Choose a Dimension:</label>
+                <select id="dimension-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="random">Random Dimension</option>
+                    <option value="Being">Being</option>
+                    <option value="Thinking">Thinking</option>
+                    <option value="Relating">Relating</option>
+                    <option value="Collaborating">Collaborating</option>
+                    <option value="Acting">Acting</option>
+                </select>
+            </div>
+            <div>
+                <label for="skill-select" class="block text-sm font-medium text-gray-700 mb-2">2. Choose a Skill:</label>
+                <select id="skill-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" disabled>
+                    <option value="random">Random Skill</option>
+                </select>
             </div>
         </div>
-    </nav>
+        
+        <!-- Generated Content Area -->
+        <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center mb-6">
+            <p id="one-liner-text" class="text-2xl md:text-3xl text-gray-800 mb-2 fade-in">"I'll listen to understand, not just to reply."</p>
+            <p id="skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full fade-in">Communication Skills</p>
+        </div>
 
-    <!-- Main Content Area -->
-    <main class="flex items-start justify-center p-4 pt-8">
-
-        <!-- Page 1: Content Generator -->
-        <div id="page-generator" class="w-full">
-            <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
-                <header class="mb-6">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">IDG Content Generator</h1>
-                    <p class="text-gray-500">Generate one-liners and captions for all 23 skills.</p>
-                </header>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-left">
-                    <div>
-                        <label for="dimension-select" class="block text-sm font-medium text-gray-700 mb-2">1. Choose a Dimension:</label>
-                        <select id="dimension-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                            <option value="random">Random Dimension</option>
-                            <option value="Being">Being</option>
-                            <option value="Thinking">Thinking</option>
-                            <option value="Relating">Relating</option>
-                            <option value="Collaborating">Collaborating</option>
-                            <option value="Acting">Acting</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="skill-select" class="block text-sm font-medium text-gray-700 mb-2">2. Choose a Skill:</label>
-                        <select id="skill-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" disabled>
-                            <option value="random">Random Skill</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center mb-6">
-                    <p id="one-liner-text" class="text-2xl md:text-3xl text-gray-800 mb-2 fade-in">"I'll listen to understand, not just to reply."</p>
-                    <p id="skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full fade-in">Communication Skills</p>
-                </div>
-                <div class="text-left">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Generated Caption:</label>
-                    <div class="relative w-full">
-                        <p id="caption-text" class="w-full bg-gray-100 rounded-md p-4 text-gray-700 text-sm border border-gray-200 min-h-[80px]"></p>
-                        <button id="copy-btn" class="absolute top-2 right-2 bg-white p-2 rounded-md text-gray-500 hover:bg-gray-200 hover:text-gray-700">
-                            <i class="ph ph-copy text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-                <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Generate New
+        <!-- Caption Area -->
+        <div class="text-left">
+             <label class="block text-sm font-medium text-gray-700 mb-2">Generated Caption:</label>
+            <div class="relative w-full">
+                <p id="caption-text" class="w-full bg-gray-100 rounded-md p-4 text-gray-700 text-sm border border-gray-200 min-h-[80px]"></p>
+                <button id="copy-btn" class="absolute top-2 right-2 bg-white p-2 rounded-md text-gray-500 hover:bg-gray-200 hover:text-gray-700">
+                    <i class="ph ph-copy text-lg"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Page 2: Skill Builder -->
-        <div id="page-builder" class="hidden w-full">
-             <div id="game-container" class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
-                <header class="flex items-center gap-4 mb-6">
-                    <h1 class="text-2xl font-bold text-gray-800">IDG Skill Builder</h1>
-                    <div class="w-full bg-gray-200 rounded-full h-4">
-                        <div id="progress-bar" class="bg-green-500 h-4 rounded-full progress-bar-fill" style="width: 0%;"></div>
-                    </div>
-                </header>
-                <div id="game-content">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Which skill is being used?</h2>
-                    <p id="scenario-text" class="text-gray-600 text-xl mb-6 min-h-[100px]"></p>
-                    <div id="options-container" class="space-y-3"></div>
-                    <button id="check-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed">
-                        Check
-                    </button>
-                </div>
-                <div id="completion-screen" class="hidden text-center py-12">
-                    <i class="ph-sparkle text-7xl text-yellow-500"></i>
-                    <h2 class="text-3xl font-extrabold text-gray-800 mt-4">Great Job!</h2>
-                    <p class="text-gray-600 mt-2">You've completed the challenge.</p>
-                    <p id="score-text" class="text-lg font-semibold mt-4"></p>
-                    <button id="restart-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-colors">
-                        Play Again
-                    </button>
-                </div>
-            </div>
-            <div id="feedback-section" class="fixed bottom-[-100%] left-0 w-full p-6 rounded-t-2xl shadow-2xl transition-all" style="min-height: 150px;">
-                <div class="flex items-center mb-3">
-                    <i id="feedback-icon" class="text-3xl mr-3"></i>
-                    <h3 id="feedback-title" class="text-2xl font-bold"></h3>
-                </div>
-                <p id="feedback-explanation" class="text-lg"></p>
-                <button id="continue-btn" class="w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors">
-                    Continue
-                </button>
-            </div>
-            <div id="one-liner-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center relative">
-                    <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-                        <i class="ph-x-bold text-2xl"></i>
-                    </button>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4" style="font-family: 'Inter', sans-serif;">IDG One-Liner</h2>
-                    <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center">
-                        <p id="one-liner-modal-content" class="text-2xl md:text-3xl text-gray-800 mb-2">...</p>
-                        <p id="one-liner-skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full" style="font-family: 'Inter', sans-serif;">...</p>
-                    </div>
-                    <button id="generate-new-liner-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105" style="font-family: 'Inter', sans-serif;">
-                        Generate New
-                    </button>
-                </div>
-            </div>
-            <button id="one-liner-bubble" class="fixed bottom-6 right-6 bg-yellow-400 h-16 w-16 rounded-full flex items-center justify-center shadow-lg text-yellow-800 z-40">
-                <i class="ph-lightbulb-fill text-4xl"></i>
-            </button>
-        </div>
-    </main>
+        <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-8 hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Generate New
+        </button>
+
+    </div>
 
     <script>
-        // --- SINGLE SOURCE OF TRUTH FOR DATA ---
-        const IDG_TOOLKIT_DATA = {
+        const idgData = {
             "Being": {
                 "Inner Compass": {
-                    oneLiners: ["Even when no one's watching, I'll do what's right.", "My values guide my choices, not the crowd.", "This doesn't feel right, so I'm not doing it."],
-                    captions: ["What's one value you refuse to compromise on? Your Inner Compass is your guide when the path isn't clear. #InnerDevelopmentGoals #Values", "Making decisions based on your deepest values isn't always easy, but it's always worth it. How do you stay true to your Inner Compass? #IDG #Integrity"]
+                    oneLiners: ["Does this choice align with my deepest values?", "Follow your purpose, not the applause.", "Let your core beliefs be your guide.", "When in doubt, consult your internal true north.", "What truly matters to me at the end of the day?", "Live a life that feels right on the inside.", "Your intuition is your most honest advisor.", "Define what \"success\" means to you, and you alone.", "Act from a place of purpose, not pressure.", "Your values are your anchor in a stormy sea.", "Build your life around what you stand for.", "Check in with your gut—it rarely lies.", "Is this action moving me closer to my vision?", "Don't just do things right; do the right things.", "Let your integrity be your most valued asset.", "Find the 'why' behind your 'what'.", "Your inner voice knows the way; just listen.", "Make choices your future self will thank you for.", "A strong inner compass prevents you from getting lost.", "Let your purpose be the reason you get up every morning."],
+                    captions: [
+                        "What's one value you refuse to compromise on? Your Inner Compass is your guide when the path isn't clear. #InnerDevelopmentGoals #Values",
+                        "Making decisions based on your deepest values isn't always easy, but it's always worth it. How do you stay true to your Inner Compass? #IDG #Integrity"
+                    ]
                 },
                 "Integrity & Authenticity": {
-                    oneLiners: ["I'll admit I made a mistake here.", "What you see is what you get with me.", "I meant what I said, and I'll stand by it."],
-                    captions: ["Authenticity isn't about being perfect, it's about being real. When was the last time you chose vulnerability over pretending? #Authenticity #IDG", "True integrity is when your words, actions, and values are all in alignment. It's a practice, not a destination. #InnerDevelopmentGoals"]
+                    oneLiners: ["Act the same way whether someone is watching or not.", "Let your actions be a true reflection of your words.", "Show up as your true self, not who you think others want to see.", "Honesty with yourself is the highest form of integrity.", "Embrace your imperfections; they are part of your story.", "Be a person whose 'yes' means yes and 'no' means no.", "Walk your talk, every single day.", "Choose vulnerability over pretending you have it all together.", "Align what you feel, what you say, and what you do.", "Authentic connection starts with being real.", "Don't trade your authenticity for approval.", "Be reliably and unapologetically you.", "Say what you mean, and mean what you say.", "Practice honesty, especially when it's uncomfortable.", "True strength lies in being genuinely yourself.", "Are my actions consistent with my stated beliefs?", "Your character is defined by the choices you make under pressure.", "Live a life you can be proud of in private.", "Dare to be fully known.", "Authenticity is the daily practice of letting go of who we're supposed to be."],
+                    captions: [
+                        "Authenticity isn't about being perfect, it's about being real. When was the last time you chose vulnerability over pretending? #Authenticity #IDG",
+                        "True integrity is when your words, actions, and values are all in alignment. It's a practice, not a destination. #InnerDevelopmentGoals"
+                    ]
                 },
                 "Openness & Learning Mindset": {
-                    oneLiners: ["I might be wrong about this, what do you think?", "That's a new idea to me, tell me more!", "Failure isn't an endpoint, it's data."],
-                    captions: ["The most successful people are often the most curious. What's something new you learned today that challenged your perspective? #GrowthMindset #IDG", "An open mind is a superpower. It allows you to see possibilities where others see dead ends. #LearnEveryDay #InnerDevelopmentGoals"]
+                    oneLiners: ["Be more interested in learning than in being right.", "Embrace the idea that you don't have all the answers.", "See challenges as opportunities to grow.", "Actively seek out feedback, especially the tough kind.", "Stay curious about people who see the world differently.", "Failure is not a dead end; it's a detour to a better solution.", "Ask more questions than you make statements.", "What can I learn from this situation?", "Let go of 'the way we've always done it'.", "Be willing to change your mind with new information.", "The expert in anything was once a beginner.", "Approach every conversation with a desire to understand.", "Treat your beliefs as hypotheses to be tested.", "A learning mindset turns mistakes into lessons.", "Be open to being surprised.", "Say \"I don't know\" with confidence.", "Every person you meet knows something you don't.", "Growth happens just outside your comfort zone.", "Unlearn what is no longer serving you.", "Stay humble, stay curious, stay learning."],
+                    captions: [
+                        "The most successful people are often the most curious. What's something new you learned today that challenged your perspective? #GrowthMindset #IDG",
+                        "An open mind is a superpower. It allows you to see possibilities where others see dead ends. #LearnEveryDay #InnerDevelopmentGoals"
+                    ]
                 },
                 "Self-awareness": {
-                    oneLiners: ["I'm feeling defensive, I need a moment.", "I know I procrastinate when I'm feeling overwhelmed.", "I'm not the best person for this task, but I can support someone who is."],
-                    captions: ["Knowing yourself is the beginning of all wisdom. What's one thing you've learned about your own patterns recently? #SelfAwareness #IDG", "Your emotions are data, not directives. Pausing to notice how you feel before you react is a game-changer. #EmotionalIntelligence #InnerDevelopmentGoals"]
+                    oneLiners: ["Notice your emotional triggers before you react.", "What story am I telling myself right now?", "Pause and ask: what am I really feeling?", "Be the observer of your thoughts, not their prisoner.", "Understand your strengths, but be honest about your weaknesses.", "Your feelings are data, not directives.", "Recognize the impact your mood has on others.", "Why did I react that way? Dig deeper.", "Know your own patterns, both helpful and unhelpful.", "Ask for feedback on your blind spots.", "Check in with your body; it holds wisdom.", "Understand what drains your energy and what recharges it.", "Be aware of the biases that shape your perceptions.", "What are my non-negotiables in life and work?", "Knowing yourself is the beginning of all wisdom.", "Take responsibility for the energy you bring into a room.", "Reflect on your day: when were you at your best?", "Separate who you are from what you achieve.", "How am I contributing to this situation?", "Self-awareness is the key to self-mastery."],
+                    captions: [
+                        "Knowing yourself is the beginning of all wisdom. What's one thing you've learned about your own patterns recently? #SelfAwareness #IDG",
+                        "Your emotions are data, not directives. Pausing to notice how you feel before you react is a game-changer. #EmotionalIntelligence #InnerDevelopmentGoals"
+                    ]
                 },
                 "Presence": {
-                    oneLiners: ["I'm putting my phone away to give you my full attention.", "Right here, right now, what's most important?", "Let's pause the hypotheticals and focus on the current situation."],
-                    captions: ["The greatest gift you can give someone is your full presence. How do you practice being 'here and now' in a world of distractions? #Mindfulness #IDG", "Are you truly here, or is your mind in your inbox? Being present is a skill that deepens every interaction. #Presence #InnerDevelopmentGoals"]
+                    oneLiners: ["Wherever you are, be all there.", "Put your phone away and look up.", "Listen to understand, not just to reply.", "Focus on this one task, this one moment.", "Feel your feet on the ground.", "The past is history, the future is a mystery, this moment is a gift.", "Breathe in, breathe out; return to now.", "Give the person you're with the gift of your full attention.", "Notice the small details in your surroundings.", "When you eat, just eat; when you walk, just walk.", "Stop multitasking your life away.", "Find the stillness in the middle of the chaos.", "What is happening right here, right now?", "Be a human being, not a human doing.", "Presence is the space where connection happens.", "Let go of rehearsing the future and replaying the past.", "Show up fully for your own life.", "Absorb the moment without judging it.", "Presence turns ordinary moments into extraordinary ones.", "The only time that truly exists is now."],
+                    captions: [
+                        "The greatest gift you can give someone is your full presence. How do you practice being 'here and now' in a world of distractions? #Mindfulness #IDG",
+                        "Are you truly here, or is your mind in your inbox? Being present is a skill that deepens every interaction. #Presence #InnerDevelopmentGoals"
+                    ]
                 }
             },
             "Thinking": {
                 "Critical Thinking": {
-                    oneLiners: ["Let's check the source of that information.", "Is that a fact, or is that an opinion?", "What are the assumptions we're making here?"],
-                    captions: ["Don't just consume information, question it. A healthy dose of skepticism is essential in today's world. What's your go-to critical thinking question? #CriticalThinking #IDG", "Thinking critically means thinking for yourself. It's about looking beyond the surface and asking 'why'. #ThinkSmarter #InnerDevelopmentGoals"]
+                    oneLiners: ["Question the assumptions—especially your own.", "Seek the evidence behind the claim.", "Who benefits from me believing this?", "Separate fact from opinion and emotion.", "Consider the opposite point of view.", "Don't just accept the first answer that comes to mind.", "Follow the logic; where does it lead?", "Identify the underlying biases in an argument.", "What information is missing from this picture?", "Think for yourself; don't outsource your judgment.", "Challenge ideas, not people.", "Is this a correlation or a causation?", "Deconstruct the problem before trying to solve it.", "Be skeptical, but not cynical.", "Evaluate the credibility of your sources.", "What's the strongest argument against my position?", "Avoid jumping to conclusions.", "Distinguish between a strong argument and a loud one.", "Analyze, don't just summarize.", "A well-formed question is halfway to an answer."],
+                    captions: [
+                        "Don't just consume information, question it. A healthy dose of skepticism is essential in today's world. What's your go-to critical thinking question? #CriticalThinking #IDG",
+                        "Thinking critically means thinking for yourself. It's about looking beyond the surface and asking 'why'. #ThinkSmarter #InnerDevelopmentGoals"
+                    ]
                 },
                 "Complexity Awareness": {
-                    oneLiners: ["This problem isn't simple; all these parts are connected.", "Changing one thing here will have ripple effects over there.", "There's no single 'right' answer, only trade-offs."],
-                    captions: ["The world isn't black and white. Embracing complexity means seeing the connections and patterns that others miss. #SystemsThinking #IDG", "Simple answers to complex problems are usually wrong. The skill is in holding the tension of multiple truths at once. #Complexity #InnerDevelopmentGoals"]
+                    oneLiners: ["Look for patterns, not just isolated events.", "Embrace \"it's complicated\" as a valid starting point.", "Zoom out to see the whole system, not just the parts.", "Recognize that solutions often have unintended consequences.", "Challenge simple, linear, cause-and-effect thinking.", "Appreciate that everything is interconnected.", "Ask: \"And what else is this connected to?\"", "There is rarely a single root cause.", "Map the system, not just the symptom.", "Move from 'either/or' to 'both/and' thinking.", "Navigate the grey areas; the world isn't black and white.", "Acknowledge that you can't control the whole system.", "Look for feedback loops, both reinforcing and balancing.", "Understand that small changes can have big impacts.", "See the problem from multiple stakeholder perspectives.", "Solutions in complex systems are emergent, not designed.", "Be comfortable with ambiguity and uncertainty.", "Focus on the relationships between the parts.", "Resist the urge for a quick, easy fix.", "See the forest and the trees."],
+                    captions: [
+                        "The world isn't black and white. Embracing complexity means seeing the connections and patterns that others miss. #SystemsThinking #IDG",
+                        "Simple answers to complex problems are usually wrong. The skill is in holding the tension of multiple truths at once. #Complexity #InnerDevelopmentGoals"
+                    ]
                 },
                 "Perspective Skills": {
-                    oneLiners: ["Let me try to see this from your point of view.", "What if the 'villain' in this story is actually the hero in theirs?", "Before I decide, I want to hear from someone who disagrees with me."],
-                    captions: ["You don't have to agree with someone to understand their perspective. The most innovative solutions come from seeing the problem from all sides. #Perspective #IDG", "Your viewpoint is just one piece of the puzzle. Who can you talk to today to see a bigger picture? #Empathy #InnerDevelopmentGoals"]
+                    oneLiners: ["Walk a mile in someone else's shoes.", "Try to argue passionately for the opposing viewpoint.", "How would this look from 10,000 feet up?", "What does this look like from their cultural context?", "How would my hero/mentor see this situation?", "Imagine yourself in the future, looking back at this moment.", "Actively seek out opinions that challenge your own.", "\"Tell me more about why you see it that way.\"", "Every story has at least two sides; have you heard them?", "Shift your frame and the problem itself shifts.", "Remember that your reality is not the reality.", "Could there be another, equally valid, interpretation?", "Listen to the voices that are not in the room.", "See yourself as one character in a larger story.", "Step outside of your own experience for a moment.", "Empathy is feeling with people; perspective is thinking with them.", "Look at the problem through a different lens: economic, social, ethical.", "Don't assume you understand someone's motives.", "What unstated assumptions are shaping my view?", "The ability to see from another's view is a superpower."],
+                    captions: [
+                        "You don't have to agree with someone to understand their perspective. The most innovative solutions come from seeing the problem from all sides. #Perspective #IDG",
+                        "Your viewpoint is just one piece of the puzzle. Who can you talk to today to see a bigger picture? #Empathy #InnerDevelopmentGoals"
+                    ]
                 },
                 "Sense-making": {
-                    oneLiners: ["Okay, there's chaos, but I'm starting to see a pattern.", "Let's map this out to see how everything connects.", "This mess of data is actually telling a simple story."],
-                    captions: ["In a world of information overload, sense-making is the skill of finding the signal in the noise. How do you make sense of chaos? #Clarity #IDG", "Connecting the dots is a creative act. It's about structuring the unknown and creating a narrative that helps us move forward. #SenseMaking #InnerDevelopmentGoals"]
+                    oneLiners: ["What's the real story behind all this data?", "Connect the dots to reveal the bigger picture.", "Find the signal in the noise.", "Turn complex information into a clear, coherent narrative.", "Ask: \"What is really going on here?\"", "Look for underlying themes and patterns.", "Organize chaos into meaningful categories.", "Synthesize different viewpoints into a new understanding.", "If this is the answer, what was the real question?", "Create mental models to understand the world.", "Test your interpretation with others.", "We make sense of things together, through conversation.", "Articulate the essence of a complex issue simply.", "Don't just collect information; interpret it.", "Find the meaning in the mess.", "Translate abstract concepts into concrete examples.", "What does this information mean for our next step?", "Create clarity out of ambiguity.", "Structure your thoughts before you share them.", "Sense-making is the bridge from knowing to understanding."],
+                    captions: [
+                        "In a world of information overload, sense-making is the skill of finding the signal in the noise. How do you make sense of chaos? #Clarity #IDG",
+                        "Connecting the dots is a creative act. It's about structuring the unknown and creating a narrative that helps us move forward. #SenseMaking #InnerDevelopmentGoals"
+                    ]
                 },
                 "Long-term Orientation & Visioning": {
-                    oneLiners: ["Will this decision still look good in 10 years?", "Let's solve the root cause, not just the symptom.", "We're planting a tree today for future generations to enjoy."],
-                    captions: ["Are we playing the short game or the long game? True impact comes from making decisions today that will serve the future. #Vision #IDG", "A clear vision acts like a compass, guiding you through the ups and downs. What's the long-term vision you're committed to? #Legacy #InnerDevelopmentGoals"]
+                    oneLiners: ["Plant trees under whose shade you do not expect to sit.", "What is the 10-year version of this decision?", "Act as a good ancestor for future generations.", "Don't sacrifice the permanent on the altar of the immediate.", "Create a compelling vision of the future you want to build.", "Move beyond short-term firefighting.", "What seeds do we need to plant today for a harvest in five years?", "Balance the needs of today with the goals of tomorrow.", "Let your vision pull you forward.", "Think in decades, not just quarters.", "What legacy do we want to leave behind?", "Make choices that expand, not limit, future options.", "Escape the tyranny of the urgent.", "A clear vision acts as a filter for daily decisions.", "Play the long game.", "What future are we creating with our actions today?", "Hold a vision, but be flexible on the path.", "Be patient with results but impatient with inaction.", "Your vision should both inspire and guide.", "Think about second- and third-order consequences."],
+                    captions: [
+                        "Are we playing the short game or the long game? True impact comes from making decisions today that will serve the future. #Vision #IDG",
+                        "A clear vision acts like a compass, guiding you through the ups and downs. What's the long-term vision you're committed to? #Legacy #InnerDevelopmentGoals"
+                    ]
                 }
             },
             "Relating": {
                 "Appreciation": {
-                    oneLiners: ["I'm genuinely grateful for the effort you put into this.", "This is a beautiful moment, let's just enjoy it.", "Thank you, I really value your contribution."],
-                    captions: ["What we appreciate, appreciates. Who is one person you can show genuine gratitude for today? #Gratitude #IDG", "Appreciation is more than just saying 'thanks'. It's about truly seeing and valuing the good in people and the world. #Appreciation #InnerDevelopmentGoals"]
+                    oneLiners: ["Notice the good that is already present.", "Actively look for the best in people.", "Express gratitude for the small, everyday things.", "Acknowledge the effort, not just the outcome.", "Celebrate the successes of others as if they were your own.", "See the beauty in imperfection.", "\"Thank you\" are two of the most powerful words you can say.", "Be specific when you give praise.", "Appreciate the journey, not just the destination.", "What you appreciate, appreciates.", "Start meetings by sharing what's going well.", "Recognize the unseen work that people do.", "Write a thank-you note to someone who made a difference.", "Focus on what you have, not on what you lack.", "Find something to be grateful for in every challenge.", "Don't take people or nature for granted.", "A moment of gratitude changes your entire attitude.", "See the value that every person brings.", "Let people know they matter.", "Cultivate an attitude of abundance."],
+                     captions: [
+                        "What we appreciate, appreciates. Who is one person you can show genuine gratitude for today? #Gratitude #IDG",
+                        "Appreciation is more than just saying 'thanks'. It's about truly seeing and valuing the good in people and the world. #Appreciation #InnerDevelopmentGoals"
+                    ]
                 },
                 "Connectedness": {
-                    oneLiners: ["When you succeed, it feels like we all succeed.", "We're all part of this ecosystem, what affects one affects us all.", "This isn't 'us vs. them,' it's just 'us'."],
-                    captions: ["We are more connected than we are separate. How can we act in a way that honors our shared humanity and planet? #Connectedness #IDG", "That feeling of being part of something bigger than yourself? That's connectedness. It's the root of compassion and collective action. #WeAreOne #InnerDevelopmentGoals"]
+                    oneLiners: ["Recognize that we are all part of an interconnected web.", "See the humanity in people you disagree with.", "Feel your connection to the natural world.", "What we do to the planet, we do to ourselves.", "Find the common ground that unites us.", "There is more that brings us together than tears us apart.", "Foster a sense of belonging for everyone.", "Act in a way that benefits the whole, not just the self.", "See yourself in others.", "Your actions have ripple effects you may never see.", "We are all in this together.", "Build bridges, not walls.", "Remember that we share one planet, one home.", "Move from \"me\" to \"we.\"", "Seek to understand how your work impacts the wider community.", "Every interaction is an opportunity for connection.", "Celebrate our shared humanity.", "Listen to the stories of those who came before you.", "The separation between us is an illusion.", "Feel part of something larger than yourself."],
+                    captions: [
+                        "We are more connected than we are separate. How can we act in a way that honors our shared humanity and planet? #Connectedness #IDG",
+                        "That feeling of being part of something bigger than yourself? That's connectedness. It's the root of compassion and collective action. #WeAreOne #InnerDevelopmentGoals"
+                    ]
                 },
                 "Humility": {
-                    oneLiners: ["I don't have all the answers, I need your help.", "Let the best idea win, it doesn't have to be mine.", "My title is less important than the work we need to do."],
-                    captions: ["Humility isn't thinking less of yourself, it's thinking of yourself less. It's the gateway to true collaboration. #Humility #IDG", "Being able to say 'I don't know' is a sign of strength, not weakness. It opens the door for others to contribute their wisdom. #Leadership #InnerDevelopmentGoals"]
+                    oneLiners: ["Be confident enough to admit when you're wrong.", "Listen more than you speak.", "Recognize that you are a work in progress.", "Acknowledge the contributions of others to your success.", "Be open to learning from anyone, regardless of their status.", "Let go of the need to have the last word.", "Understand your place in the vastness of the universe.", "Seek to serve, not to be served.", "Don't be afraid to say, \"I need help.\"", "True humility is not thinking less of yourself; it's thinking of yourself less.", "Stay teachable.", "Put the team's success above your own ego.", "Ask for forgiveness when you make a mistake.", "Be a student of life, always.", "Know that there is always more to learn.", "Give credit freely and generously.", "Resist the urge to show off.", "Your title doesn't make you better than anyone else.", "Approach situations with a beginner's mind.", "True confidence is quiet; insecurity is loud."],
+                    captions: [
+                        "Humility isn't thinking less of yourself, it's thinking of yourself less. It's the gateway to true collaboration. #Humility #IDG",
+                        "Being able to say 'I don't know' is a sign of strength, not weakness. It opens the door for others to contribute their wisdom. #Leadership #InnerDevelopmentGoals"
+                    ]
                 },
                 "Empathy & Compassion": {
-                    oneLiners: ["It sounds like you're having a really tough day.", "I can imagine how frustrating that must feel.", "How can I support you through this?"],
-                    captions: ["Empathy is feeling *with* people. Compassion is acting on that feeling. The world needs more of both. #Empathy #IDG", "Before you judge, get curious. Everyone is fighting a battle you know nothing about. A little compassion goes a long way. #Kindness #InnerDevelopmentGoals"]
+                    oneLiners: ["Try to feel what another person is feeling.", "Listen with your heart, not just your ears.", "Acknowledge someone's pain without trying to fix it.", "\"That sounds really hard\" can be the most compassionate response.", "Assume people are doing the best they can with what they know.", "Be kind, for everyone you meet is fighting a hard battle.", "Turn your empathy into compassionate action.", "Choose kindness, especially when it's difficult.", "See the person behind the behavior.", "Wish for others to be free from suffering.", "Hold space for someone's emotions without judgment.", "Compassion is empathy plus a desire to help.", "Practice self-compassion; treat yourself as you would a good friend.", "Ask, \"How can I support you right now?\"", "Connect with the feeling, not just the facts of the story.", "Empathy dissolves judgment.", "Extend compassion to those you find it hardest to forgive.", "Validate someone's feelings, even if you don't agree with them.", "Be gentle with yourself and others.", "Compassion is the radicalism of our time."],
+                    captions: [
+                        "Empathy is feeling *with* people. Compassion is acting on that feeling. The world needs more of both. #Empathy #IDG",
+                        "Before you judge, get curious. Everyone is fighting a battle you know nothing about. A little compassion goes a long way. #Kindness #InnerDevelopmentGoals"
+                    ]
                 }
             },
             "Collaborating": {
                 "Communication Skills": {
-                    oneLiners: ["Let me rephrase that to make sure I understand you correctly.", "I'll listen to understand, not just to reply.", "Let's talk this through, face-to-face."],
-                    captions: ["The biggest communication problem is we do not listen to understand, we listen to reply. Let's change that. #Communication #IDG", "Clear, kind, and honest communication is the bedrock of any healthy relationship, at work and at home. #ListenWell #InnerDevelopmentGoals"]
+                    oneLiners: ["Listen to understand, not just to wait for your turn to talk.", "Clarity is kindness.", "Say what you need to say, but do it with respect.", "Adapt your communication style to your audience.", "Ask clarifying questions to avoid misunderstandings.", "Master the art of giving and receiving constructive feedback.", "Read the non-verbal cues in the room.", "Share your intent before you share your message.", "Use \"I\" statements to express your feelings and needs.", "Summarize what you heard to ensure you understood correctly.", "Tell stories to make your message memorable.", "Seek first to understand, then to be understood.", "Create psychological safety for open dialogue.", "The meaning of your communication is the response you get.", "Choose your words carefully; they have power.", "Have the courageous conversations that matter.", "Great communication is about connection, not just transmission.", "Pause before you respond, especially when you're emotional.", "Be concise and get to the point.", "The most important part of communication is hearing what isn't said."],
+                    captions: [
+                        "The biggest communication problem is we do not listen to understand, we listen to reply. Let's change that. #Communication #IDG",
+                        "Clear, kind, and honest communication is the bedrock of any healthy relationship, at work and at home. #ListenWell #InnerDevelopmentGoals"
+                    ]
                 },
                 "Co-creation Skills": {
-                    oneLiners: ["My idea is just a starting point, let's build on it together.", "How can we combine our skills to create something new?", "This is our shared project, everyone's input matters."],
-                    captions: ["None of us is as smart as all of us. Co-creation is about building something together that no one could build alone. #Collaboration #IDG", "What amazing things could you create if you invited others into the process? The magic happens in the 'and'. #Teamwork #InnerDevelopmentGoals"]
+                    oneLiners: ["Build on the ideas of others with \"Yes, and...\"", "Foster an environment where the best idea wins, no matter who it came from.", "Harness the collective intelligence of the group.", "Make space for everyone to contribute.", "Co-creation is about building something together that no one could build alone.", "Let go of sole ownership of ideas.", "Iterate and experiment together.", "Focus on a shared goal.", "Embrace creative friction as a source of innovation.", "Ensure diverse perspectives are included in the process.", "Facilitate, don't dominate, the conversation.", "Trust the process of emergent discovery.", "Make your thinking visible to the group.", "Prototype early and often.", "Celebrate shared progress and collective wins.", "Design the process, then let the content emerge.", "See disagreements as opportunities to find a better way.", "Invite collaboration from the very beginning.", "The goal is shared understanding and shared commitment.", "Together, we are smarter than any one of us."],
+                    captions: [
+                        "None of us is as smart as all of us. Co-creation is about building something together that no one could build alone. #Collaboration #IDG",
+                        "What amazing things could you create if you invited others into the process? The magic happens in the 'and'. #Teamwork #InnerDevelopmentGoals"
+                    ]
                 },
                 "Inclusive Mindset": {
-                    oneLiners: ["Whose voice is missing from this conversation?", "We need diverse perspectives to get this right.", "Let's make sure everyone feels they can contribute safely."],
-                    captions: ["Diversity is a fact, inclusion is a choice. An inclusive mindset actively seeks out and values the voices that are often unheard. #Inclusion #IDG", "Great ideas can come from anywhere. Is your table big enough for everyone? #DiversityandInclusion #InnerDevelopmentGoals"]
+                    oneLiners: ["Actively seek out and value different perspectives.", "Challenge your own biases and stereotypes.", "Ask, \"Whose voice is not being heard here?\"", "Create a space where everyone feels they belong.", "Learn about the cultural norms of others before you interact.", "Don't just tolerate diversity; celebrate it.", "Be curious, not judgmental, about cultural differences.", "Recognize and address microaggressions.", "Inclusion is not just being invited to the party; it's being asked to dance.", "Use your privilege to amplify the voices of others.", "Understand that equality and equity are not the same thing.", "Be an ally, not just in words but in action.", "Pronounce people's names correctly; it's a sign of respect.", "Adapt your behavior to create a more inclusive environment.", "Suspend your assumptions and listen to lived experiences.", "Equity is about giving people what they need to succeed.", "Look for the strengths in different cultural approaches.", "Be aware of the power dynamics in the room.", "Make belonging a key performance indicator.", "Great teams are built on a foundation of inclusion."],
+                    captions: [
+                        "Diversity is a fact, inclusion is a choice. An inclusive mindset actively seeks out and values the voices that are often unheard. #Inclusion #IDG",
+                        "Great ideas can come from anywhere. Is your table big enough for everyone? #DiversityandInclusion #InnerDevelopmentGoals"
+                    ]
                 },
                 "Trust": {
-                    oneLiners: ["I trust your judgment on this, you're the expert.", "I'll be transparent about my process so you're always in the loop.", "You can count on me to do what I said I would do."],
-                    captions: ["Trust is built in tiny moments: doing what you say you'll do, being transparent, and assuming good intent. #Trust #IDG", "You can't have collaboration without trust. It's the psychological safety that allows teams to take risks and be brilliant. #Leadership #InnerDevelopmentGoals"]
+                    oneLiners: ["Do what you say you will do.", "Be transparent and share information openly.", "Extend trust to others first.", "Assume good intent in your colleagues' actions.", "Trust is built in small moments, over time.", "Be vulnerable and admit when you don't know something.", "Have people's backs, especially when they're not in the room.", "Communicate consistently and predictably.", "Trust is the currency of collaboration.", "Apologize sincerely when you break trust.", "Give people autonomy and ownership.", "Be competent and deliver on your responsibilities.", "Keep confidences.", "Trust moves at the speed of safety.", "Behave in a way that makes others feel psychologically safe.", "Listen without judgment.", "Show that you care about people as individuals.", "Inconsistency erodes trust faster than anything else.", "Trust yourself, and others will trust you.", "Building trust is an investment with the highest return."],
+                    captions: [
+                        "Trust is built in tiny moments: doing what you say you'll do, being transparent, and assuming good intent. #Trust #IDG",
+                        "You can't have collaboration without trust. It's the psychological safety that allows teams to take risks and be brilliant. #Leadership #InnerDevelopmentGoals"
+                    ]
                 },
                 "Mobilization Skills": {
-                    oneLiners: ["This is what we can achieve if we all work together!", "I have a vision, who wants to help me build it?", "Your unique skill is exactly what this movement needs."],
-                    captions: ["A powerful vision can mobilize people to achieve the impossible. What's a cause that you would rally people for? #Leadership #IDG", "Mobilizing others isn't about commanding, it's about inspiring. It's inviting people into a story where they can play a meaningful part. #Community #InnerDevelopmentGoals"]
+                    oneLiners: ["Inspire a shared vision that moves people to action.", "Connect people's work to a larger purpose.", "Create a sense of urgency, but also a sense of hope.", "Empower others to take initiative and lead.", "Start a movement, not just a project.", "Identify and activate the key influencers in a network.", "Make it easy for people to join and contribute.", "Communicate a clear and compelling call to action.", "Build coalitions and find common ground among diverse groups.", "Tell stories of progress to build momentum.", "Recognize and celebrate early adopters and champions.", "Turn passion into a plan.", "Create a platform for others to shine.", "Don't ask for permission; ask for partnership.", "The first follower is what transforms a lone nut into a leader.", "Mobilize hearts and minds, not just hands.", "Give people a reason to care and a way to act.", "Catalyze action by removing barriers.", "Make the first step small and achievable.", "Unleash the collective energy of a community."],
+                    captions: [
+                        "A powerful vision can mobilize people to achieve the impossible. What's a cause that you would rally people for? #Leadership #IDG",
+                        "Mobilizing others isn't about commanding, it's about inspiring. It's inviting people into a story where they can play a meaningful part. #Community #InnerDevelopmentGoals"
+                    ]
                 }
             },
             "Acting": {
                 "Courage": {
-                    oneLiners: ["This is scary, but it's too important not to try.", "I will speak up, even if my voice shakes.", "Let's be the first ones to do this."],
-                    captions: ["Courage is not the absence of fear, but acting in spite of it. What's one small act of courage you can take today? #Courage #IDG", "The world is changed by people who were brave enough to take the first step. Be one of them. #BeBrave #InnerDevelopmentGoals"]
+                    oneLiners: ["Feel the fear and do it anyway.", "Speak your truth, even when your voice shakes.", "Choose what is right over what is easy.", "Take the first step, even if you can't see the whole staircase.", "Stand up for your values, even if you stand alone.", "Have the uncomfortable conversations that need to be had.", "Lean into vulnerability; it's the birthplace of courage.", "Challenge the status quo constructively.", "Act on your convictions.", "What would you do if you weren't afraid?", "Bravery is a muscle; you need to exercise it.", "Take calculated risks in the service of a greater goal.", "Ask for what you want.", "Courage is contagious.", "Say \"no\" to protect your priorities and well-being.", "Make a decision in the face of uncertainty.", "Be willing to fail in the pursuit of something meaningful.", "Defend someone who is being treated unfairly.", "True courage is acting in spite of fear, not in the absence of it.", "Be brave enough to start, and strong enough to finish."],
+                    captions: [
+                        "Courage is not the absence of fear, but acting in spite of it. What's one small act of courage you can take today? #Courage #IDG",
+                        "The world is changed by people who were brave enough to take the first step. Be one of them. #BeBrave #InnerDevelopmentGoals"
+                    ]
                 },
                 "Creativity": {
-                    oneLiners: ["What if we just ignored the rules for a moment?", "Let's try the weirdest idea first.", "There has to be another way to look at this problem."],
-                    captions: ["Creativity is intelligence having fun. How can you break a pattern or challenge a convention in your work today? #Creativity #IDG", "You don't have to be an artist to be creative. It's about connecting ideas in new ways to solve problems. #Innovation #InnerDevelopmentGoals"]
+                    oneLiners: ["Connect ideas that seem unrelated.", "Ask \"What if...?\" as often as possible.", "Break the rules, but understand them first.", "Embrace constraints as a catalyst for innovation.", "Look at the world with fresh, childlike eyes.", "Generate a hundred bad ideas to find one good one.", "Make time to be bored; that's when ideas emerge.", "Think outside the box you didn't know you were in.", "Combine, reverse, and magnify existing concepts.", "Creativity is intelligence having fun.", "Change your environment to change your perspective.", "Don't be afraid to be playful and experiment.", "Borrow ideas from completely different fields.", "Turn problems into creative challenges.", "Separate the process of creating from the process of critiquing.", "Every act of creation is first an act of destruction.", "Doodle, daydream, and let your mind wander.", "Find the intersection of different disciplines.", "The opposite of play isn't work—it's depression.", "View every problem as an opportunity for a creative solution."],
+                    captions: [
+                        "Creativity is intelligence having fun. How can you break a pattern or challenge a convention in your work today? #Creativity #IDG",
+                        "You don't have to be an artist to be creative. It's about connecting ideas in new ways to solve problems. #Innovation #InnerDevelopmentGoals"
+                    ]
                 },
                 "Optimism": {
-                    oneLiners: ["It's going to be hard, but I know we can figure it out.", "Look at the progress we've already made!", "I see a possibility here, not just a problem."],
-                    captions: ["Optimism isn't blind positivity. It's a resilient belief in a better future and in our power to create it. #Optimism #IDG", "What you focus on grows. Choosing to see the possibilities, even amidst challenges, is a powerful form of leadership. #Hope #InnerDevelopmentGoals"]
+                    oneLiners: ["Focus on what is possible, not just what is probable.", "Believe in a better future and your power to create it.", "See challenges as temporary setbacks, not permanent failures.", "Look for the opportunity hidden in every difficulty.", "Optimism is a strategic choice, not a personality trait.", "Celebrate progress, no matter how small.", "Envision the best possible outcome.", "Surround yourself with people who lift you up.", "Act as if success is inevitable.", "Be a beacon of hope for others.", "Your attitude determines your altitude.", "Find the silver lining.", "It's not about ignoring reality; it's about focusing on solutions.", "A pessimist sees the difficulty in every opportunity; an optimist sees the opportunity in every difficulty.", "Believe that the future can be better than the present.", "Optimism is the faith that leads to achievement.", "Frame problems as challenges to be overcome.", "Radiate positive energy.", "Remember that even the darkest night will end and the sun will rise.", "Choose hope."],
+                    captions: [
+                        "Optimism isn't blind positivity. It's a resilient belief in a better future and in our power to create it. #Optimism #IDG",
+                        "What you focus on grows. Choosing to see the possibilities, even amidst challenges, is a powerful form of leadership. #Hope #InnerDevelopmentGoals"
+                    ]
                 },
                 "Perseverance": {
-                    oneLiners: ["Okay, that didn't work. Let's try again tomorrow.", "I'm not giving up on this goal.", "This is a marathon, not a sprint."],
-                    captions: ["The journey to anything worthwhile is filled with setbacks. Perseverance is the skill of getting back up, again and again. #Resilience #IDG", "Success is not final, failure is not fatal: it is the courage to continue that counts. #Perseverance #InnerDevelopmentGoals"]
+                    oneLiners: ["Fall down seven times, stand up eight.", "It's not about how you start; it's about how you finish.", "Embrace the grind; long-term consistency beats short-term intensity.", "When you feel like quitting, remember why you started.", "The journey of a thousand miles begins with a single step—and then another.", "Grit is passion and perseverance for very long-term goals.", "See failure as a stepping stone, not a stumbling block.", "Stay committed to your decisions, but flexible in your approach.", "Success is the sum of small efforts, repeated day in and day out.", "Rest and recover, but don't you quit.", "Our greatest weakness lies in giving up.", "Be a postage stamp—stick to one thing until you get there.", "Keep going, especially when it's hard.", "It does not matter how slowly you go as long as you do not stop.", "Focus on your effort, not just the results.", "Patience, persistence, and perspiration make an unbeatable combination for success.", "Turn obstacles into fuel for your journey.", "Discipline is choosing between what you want now and what you want most.", "Stay the course.", "Never, never, never give up."],
+                    captions: [
+                        "The journey to anything worthwhile is filled with setbacks. Perseverance is the skill of getting back up, again and again. #Resilience #IDG",
+                        "Success is not final, failure is not fatal: it is the courage to continue that counts. #Perseverance #InnerDevelopmentGoals"
+                    ]
                 }
             }
         };
 
-        const gameData = [
-             { scenario: "Your team is stuck. Instead of pushing your own idea, you ask, 'What if we looked at this from the customer's perspective?'", options: ["Courage", "Perspective Skills", "Perseverance"], correctAnswer: "Perspective Skills", explanation: "By actively seeking a different viewpoint, you are using your Perspective Skills to unlock new solutions." },
-             { scenario: "You receive critical feedback on a project. Instead of getting defensive, you pause, take a breath, and ask for more details.", options: ["Creativity", "Self-awareness", "Optimism"], correctAnswer: "Self-awareness", explanation: "Recognizing your emotional reaction and choosing to respond thoughtfully is a key part of Self-awareness." },
-             { scenario: "A colleague from a different culture communicates very directly. You remind yourself that communication styles vary and focus on their message.", options: ["Inclusive Mindset", "Co-creation Skills", "Critical Thinking"], correctAnswer: "Inclusive Mindset", explanation: "Embracing and adapting to different cultural norms is a core part of having an Inclusive Mindset." },
-             { scenario: "A community project is taking much longer than expected. Instead of giving up, you remind the team of the long-term vision and break the work into smaller steps.", options: ["Humility", "Perseverance", "Appreciation"], correctAnswer: "Perseverance", explanation: "Sustaining engagement and remaining determined, even when things are difficult, is the essence of Perseverance." },
-             { scenario: "During a brainstorm, you suggest a wild idea that might not work, just to encourage others to think outside the box.", options: ["Trust", "Connectedness", "Creativity"], correctAnswer: "Creativity", explanation: "Generating original ideas and disrupting conventional patterns to foster innovation is a key aspect of Creativity." }
-        ];
+        const oneLinerText = document.getElementById('one-liner-text');
+        const skillTag = document.getElementById('skill-tag');
+        const captionText = document.getElementById('caption-text');
+        const copyBtn = document.getElementById('copy-btn');
+        const generateBtn = document.getElementById('generate-btn');
+        const dimensionSelect = document.getElementById('dimension-select');
+        const skillSelect = document.getElementById('skill-select');
 
-        // --- SCOPED LOGIC FOR CONTENT GENERATOR ---
-        (() => {
-            const oneLinerText = document.getElementById('one-liner-text');
-            const skillTag = document.getElementById('skill-tag');
-            const captionText = document.getElementById('caption-text');
-            const copyBtn = document.getElementById('copy-btn');
-            const generateBtn = document.getElementById('generate-btn');
-            const dimensionSelect = document.getElementById('dimension-select');
-            const skillSelect = document.getElementById('skill-select');
+        function populateSkillsDropdown() {
+            const selectedDimension = dimensionSelect.value;
+            skillSelect.innerHTML = '<option value="random">Random Skill</option>'; // Reset
 
-            function populateSkillsDropdown() {
-                const selectedDimension = dimensionSelect.value;
-                skillSelect.innerHTML = '<option value="random">Random Skill</option>';
-                if (selectedDimension !== 'random') {
-                    const skills = Object.keys(IDG_TOOLKIT_DATA[selectedDimension]);
-                    skills.forEach(skill => {
-                        const option = document.createElement('option');
-                        option.value = skill;
-                        option.textContent = skill;
-                        skillSelect.appendChild(option);
-                    });
-                    skillSelect.disabled = false;
-                } else {
-                    skillSelect.disabled = true;
-                }
-            }
-
-            function generateContent() {
-                let selectedDimension = dimensionSelect.value;
-                let selectedSkill = skillSelect.value;
-                let dimension, skillName;
-
-                if (selectedDimension === 'random') {
-                    const dimensions = Object.keys(IDG_TOOLKIT_DATA);
-                    dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
-                } else {
-                    dimension = selectedDimension;
-                }
-                
-                if (selectedSkill === 'random' || selectedDimension === 'random') {
-                    const skills = Object.keys(IDG_TOOLKIT_DATA[dimension]);
-                    skillName = skills[Math.floor(Math.random() * skills.length)];
-                } else {
-                    skillName = selectedSkill;
-                }
-                
-                const skillData = IDG_TOOLKIT_DATA[dimension][skillName];
-                const randomOneLiner = skillData.oneLiners[Math.floor(Math.random() * skillData.oneLiners.length)];
-                const randomCaption = skillData.captions[Math.floor(Math.random() * skillData.captions.length)];
-
-                [oneLinerText, skillTag, captionText].forEach(el => el.classList.remove('fade-in'));
-                void oneLinerText.offsetWidth;
-                
-                oneLinerText.textContent = `"${randomOneLiner}"`;
-                skillTag.textContent = skillName;
-                captionText.textContent = randomCaption;
-                
-                [oneLinerText, skillTag, captionText].forEach(el => el.classList.add('fade-in'));
-            }
-            
-            copyBtn.addEventListener('click', () => {
-                // Using document.execCommand for wider compatibility in sandboxed environments
-                const textarea = document.createElement('textarea');
-                textarea.value = captionText.textContent;
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    const originalIcon = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="ph ph-check text-lg text-green-500"></i>';
-                    setTimeout(() => {
-                        copyBtn.innerHTML = originalIcon;
-                    }, 2000);
-                } catch (err) {
-                    console.error('Fallback: Oops, unable to copy', err);
-                }
-                document.body.removeChild(textarea);
-            });
-
-            dimensionSelect.addEventListener('change', () => {
-                populateSkillsDropdown();
-                generateContent();
-            });
-            skillSelect.addEventListener('change', generateContent);
-            generateBtn.addEventListener('click', generateContent);
-
-            // Expose init functions for the main controller
-            window.initGenerator = () => {
-                 populateSkillsDropdown();
-                 generateContent();
-            };
-        })();
-
-
-        // --- SCOPED LOGIC FOR SKILL BUILDER ---
-        (() => {
-            const progressBar = document.getElementById('progress-bar');
-            const scenarioText = document.getElementById('scenario-text');
-            const optionsContainer = document.getElementById('options-container');
-            const checkBtn = document.getElementById('check-btn');
-            const feedbackSection = document.getElementById('feedback-section');
-            const feedbackIcon = document.getElementById('feedback-icon');
-            const feedbackTitle = document.getElementById('feedback-title');
-            const feedbackExplanation = document.getElementById('feedback-explanation');
-            const continueBtn = document.getElementById('continue-btn');
-            const gameContent = document.getElementById('game-content');
-            const completionScreen = document.getElementById('completion-screen');
-            const scoreText = document.getElementById('score-text');
-            const restartBtn = document.getElementById('restart-btn');
-            const oneLinerModal = document.getElementById('one-liner-modal');
-            const oneLinerBubble = document.getElementById('one-liner-bubble');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const generateNewLinerBtn = document.getElementById('generate-new-liner-btn');
-            const oneLinerModalContent = document.getElementById('one-liner-modal-content');
-            const oneLinerSkillTag = document.getElementById('one-liner-skill-tag');
-
-            let currentQuestionIndex = 0;
-            let selectedAnswer = null;
-            let score = 0;
-            let questions = [];
-
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-            }
-
-            function startGame() {
-                currentQuestionIndex = 0;
-                score = 0;
-                selectedAnswer = null;
-                questions = shuffleArray([...gameData]);
-                gameContent.style.display = 'block';
-                completionScreen.style.display = 'none';
-                feedbackSection.style.bottom = '-100%';
-                updateProgressBar();
-                loadQuestion();
-            }
-
-            function loadQuestion() {
-                checkBtn.disabled = true;
-                const currentQuestion = questions[currentQuestionIndex];
-                scenarioText.textContent = currentQuestion.scenario;
-                optionsContainer.innerHTML = '';
-                currentQuestion.options.forEach(option => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.classList.add('w-full', 'text-left', 'p-4', 'border-2', 'border-gray-300', 'rounded-xl', 'font-semibold', 'text-gray-700', 'hover:bg-gray-50', 'option-card');
-                    button.onclick = () => selectOption(button, option);
-                    optionsContainer.appendChild(button);
+            if (selectedDimension !== 'random') {
+                const skills = Object.keys(idgData[selectedDimension]);
+                skills.forEach(skill => {
+                    const option = document.createElement('option');
+                    option.value = skill;
+                    option.textContent = skill;
+                    skillSelect.appendChild(option);
                 });
+                skillSelect.disabled = false;
+            } else {
+                skillSelect.disabled = true;
             }
+        }
 
-            function selectOption(button, option) {
-                Array.from(optionsContainer.children).forEach(child => child.classList.remove('selected'));
-                button.classList.add('selected');
-                selectedAnswer = option;
-                checkBtn.disabled = false;
-            }
+        function generateContent() {
+            let selectedDimension = dimensionSelect.value;
+            let selectedSkill = skillSelect.value;
 
-            function checkAnswer() {
-                const currentQuestion = questions[currentQuestionIndex];
-                const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-                if (isCorrect) {
-                    score++;
-                    feedbackTitle.textContent = "Correct!";
-                    feedbackIcon.className = 'ph-check-circle text-3xl mr-3 text-green-500';
-                    feedbackSection.style.backgroundColor = '#D1FAE5';
-                    feedbackExplanation.style.color = '#065F46';
-                    continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-green-500 text-white hover:bg-green-600';
-                } else {
-                    feedbackTitle.textContent = "Not quite...";
-                    feedbackIcon.className = 'ph-x-circle text-3xl mr-3 text-red-500';
-                    feedbackSection.style.backgroundColor = '#FEE2E2';
-                    feedbackExplanation.style.color = '#991B1B';
-                    continueBtn.className = 'w-full font-bold py-3 px-4 rounded-xl mt-6 transition-colors bg-red-500 text-white hover:bg-red-600';
-                }
-                feedbackExplanation.textContent = currentQuestion.explanation;
-                feedbackSection.style.bottom = '0';
-            }
+            let dimension, skillName;
 
-            function continueGame() {
-                feedbackSection.style.bottom = '-100%';
-                currentQuestionIndex++;
-                selectedAnswer = null;
-                updateProgressBar();
-                if (currentQuestionIndex < questions.length) {
-                    loadQuestion();
-                } else {
-                    showCompletionScreen();
-                }
+            // Determine dimension and skill
+            if (selectedDimension === 'random') {
+                const dimensions = Object.keys(idgData);
+                dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
+            } else {
+                dimension = selectedDimension;
             }
             
-            function updateProgressBar() {
-                const progress = (currentQuestionIndex / questions.length) * 100;
-                progressBar.style.width = `${progress}%`;
-            }
-
-            function showCompletionScreen() {
-                gameContent.style.display = 'none';
-                completionScreen.style.display = 'block';
-                scoreText.textContent = `You scored ${score} out of ${questions.length}!`;
-                progressBar.style.width = '100%';
-            }
-
-            function generateOneLinerInModal() {
-                const dimensions = Object.keys(IDG_TOOLKIT_DATA);
-                const dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
-                const skills = IDG_TOOLKIT_DATA[dimension];
-                const skillNames = Object.keys(skills);
-                const randomSkillName = skillNames[Math.floor(Math.random() * skillNames.length)];
-                const oneLiners = skills[randomSkillName].oneLiners;
-                const randomOneLiner = oneLiners[Math.floor(Math.random() * oneLiners.length)];
-
-                oneLinerModalContent.classList.remove('fade-in');
-                oneLinerSkillTag.classList.remove('fade-in');
-                void oneLinerModalContent.offsetWidth;
-
-                oneLinerModalContent.textContent = `"${randomOneLiner}"`;
-                oneLinerSkillTag.textContent = randomSkillName;
-                
-                oneLinerModalContent.classList.add('fade-in');
-                oneLinerSkillTag.classList.add('fade-in');
+            if (selectedSkill === 'random' || selectedDimension === 'random') {
+                 const skills = Object.keys(idgData[dimension]);
+                 skillName = skills[Math.floor(Math.random() * skills.length)];
+            } else {
+                skillName = selectedSkill;
             }
             
-            checkBtn.addEventListener('click', checkAnswer);
-            continueBtn.addEventListener('click', continueGame);
-            restartBtn.addEventListener('click', startGame);
-            oneLinerBubble.addEventListener('click', () => {
-                generateOneLinerInModal();
-                oneLinerModal.classList.remove('hidden');
+            const skillData = idgData[dimension][skillName];
+            
+            const randomOneLiner = skillData.oneLiners[Math.floor(Math.random() * skillData.oneLiners.length)];
+            const randomCaption = skillData.captions[Math.floor(Math.random() * skillData.captions.length)];
+
+            // Animate and update content
+            [oneLinerText, skillTag, captionText].forEach(el => el.classList.remove('fade-in'));
+            void oneLinerText.offsetWidth; // Trigger reflow to restart animation
+            
+            oneLinerText.textContent = `"${randomOneLiner}"`;
+            skillTag.textContent = skillName;
+            captionText.textContent = randomCaption;
+            
+             [oneLinerText, skillTag, captionText].forEach(el => el.classList.add('fade-in'));
+        }
+        
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(captionText.textContent).then(() => {
+                const originalIcon = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="ph ph-check text-lg text-green-500"></i>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalIcon;
+                }, 2000);
             });
-            closeModalBtn.addEventListener('click', () => oneLinerModal.classList.add('hidden'));
-            generateNewLinerBtn.addEventListener('click', generateOneLinerInModal);
-            
-            // Expose init function for main controller
-            window.initBuilder = startGame;
-        })();
+        });
 
+        dimensionSelect.addEventListener('change', () => {
+            populateSkillsDropdown();
+            generateContent();
+        });
+        skillSelect.addEventListener('change', generateContent);
+        generateBtn.addEventListener('click', generateContent);
 
-        // --- MAIN NAVIGATION CONTROLLER ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const navGenerator = document.getElementById('nav-generator');
-            const navBuilder = document.getElementById('nav-builder');
-            const pageGenerator = document.getElementById('page-generator');
-            const pageBuilder = document.getElementById('page-builder');
-            const oneLinerBubble = document.getElementById('one-liner-bubble');
-
-            function showGenerator() {
-                pageGenerator.classList.remove('hidden');
-                pageBuilder.classList.add('hidden');
-                oneLinerBubble.classList.add('hidden'); // Hide bubble on generator page
-                navGenerator.classList.add('bg-blue-600', 'text-white');
-                navGenerator.classList.remove('bg-transparent', 'text-gray-600');
-                navBuilder.classList.add('bg-transparent', 'text-gray-600');
-                navBuilder.classList.remove('bg-blue-600', 'text-white');
-            }
-
-            function showBuilder() {
-                pageGenerator.classList.add('hidden');
-                pageBuilder.classList.remove('hidden');
-                oneLinerBubble.classList.remove('hidden'); // Show bubble on builder page
-                navBuilder.classList.add('bg-blue-600', 'text-white');
-                navBuilder.classList.remove('bg-transparent', 'text-gray-600');
-                navGenerator.classList.add('bg-transparent', 'text-gray-600');
-                navGenerator.classList.remove('bg-blue-600', 'text-white');
-                window.initBuilder(); // Start the game when switching to this tab
-            }
-
-            navGenerator.addEventListener('click', showGenerator);
-            navBuilder.addEventListener('click', showBuilder);
-
-            // Initial state on load
-            window.initGenerator();
-            showGenerator();
+        // Initial generation on page load
+        window.addEventListener('load', () => {
+            populateSkillsDropdown();
+            generateContent();
         });
 
     </script>
+
 </body>
 </html>
+
