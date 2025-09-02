@@ -34,6 +34,23 @@
         #feedback-section {
             transition: bottom 0.3s ease-in-out;
         }
+        /* Styles for the new one-liner bubble and modal */
+        #one-liner-bubble {
+            transition: transform 0.2s ease-in-out;
+        }
+        #one-liner-bubble:hover {
+            transform: scale(1.1);
+        }
+        #one-liner-modal-content {
+            font-family: 'Comic Neue', cursive;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -87,8 +104,66 @@
         </button>
     </div>
 
+    <!-- One-Liner Generator Modal (Initially Hidden) -->
+    <div id="one-liner-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center relative">
+            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                <i class="ph-x-bold text-2xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4" style="font-family: 'Inter', sans-serif;">IDG One-Liner</h2>
+            <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-6 min-h-[150px] flex flex-col justify-center items-center">
+                <p id="one-liner-modal-content" class="text-2xl md:text-3xl text-gray-800 mb-2">...</p>
+                <p id="one-liner-skill-tag" class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full" style="font-family: 'Inter', sans-serif;">...</p>
+            </div>
+            <button id="generate-new-liner-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl mt-6 hover:bg-blue-700 transition-transform transform hover:scale-105" style="font-family: 'Inter', sans-serif;">
+                Generate New
+            </button>
+        </div>
+    </div>
+
+    <!-- Clickable Bubble for One-Liner -->
+    <button id="one-liner-bubble" class="fixed bottom-6 right-6 bg-yellow-400 h-16 w-16 rounded-full flex items-center justify-center shadow-lg text-yellow-800 z-40">
+        <i class="ph-lightbulb-fill text-4xl"></i>
+    </button>
+
 
     <script>
+        const idgOneLiners = {
+            "Being": {
+                "Inner Compass": ["Even when no one's watching, I'll do what's right.", "My values guide my choices, not the crowd.", "This doesn't feel right, so I'm not doing it."],
+                "Integrity & Authenticity": ["I'll admit I made a mistake here.", "What you see is what you get with me.", "I meant what I said, and I'll stand by it."],
+                "Openness & Learning Mindset": ["I might be wrong about this, what do you think?", "That's a new idea to me, tell me more!", "Failure isn't an endpoint, it's data."],
+                "Self-awareness": ["I'm feeling defensive, I need a moment.", "I know I procrastinate when I'm feeling overwhelmed.", "I'm not the best person for this task, but I can support someone who is."],
+                "Presence": ["I'm putting my phone away to give you my full attention.", "Right here, right now, what's most important?", "Let's pause the hypotheticals and focus on the current situation."]
+            },
+            "Thinking": {
+                "Critical Thinking": ["Let's check the source of that information.", "Is that a fact, or is that an opinion?", "What are the assumptions we're making here?"],
+                "Complexity Awareness": ["This problem isn't simple; all these parts are connected.", "Changing one thing here will have ripple effects over there.", "There's no single 'right' answer, only trade-offs."],
+                "Perspective Skills": ["Let me try to see this from your point of view.", "What if the 'villain' in this story is actually the hero in theirs?", "Before I decide, I want to hear from someone who disagrees with me."],
+                "Sense-making": ["Okay, there's chaos, but I'm starting to see a pattern.", "Let's map this out to see how everything connects.", "This mess of data is actually telling a simple story."],
+                "Long-term Orientation & Visioning": ["Will this decision still look good in 10 years?", "Let's solve the root cause, not just the symptom.", "We're planting a tree today for future generations to enjoy."]
+            },
+            "Relating": {
+                "Appreciation": ["I'm genuinely grateful for the effort you put into this.", "This is a beautiful moment, let's just enjoy it.", "Thank you, I really value your contribution."],
+                "Connectedness": ["When you succeed, it feels like we all succeed.", "We're all part of this ecosystem, what affects one affects us all.", "This isn't 'us vs. them,' it's just 'us'."],
+                "Humility": ["I don't have all the answers, I need your help.", "Let the best idea win, it doesn't have to be mine.", "My title is less important than the work we need to do."],
+                "Empathy & Compassion": ["It sounds like you're having a really tough day.", "I can imagine how frustrating that must feel.", "How can I support you through this?"]
+            },
+            "Collaborating": {
+                "Communication Skills": ["Let me rephrase that to make sure I understand you correctly.", "I'll listen to understand, not just to reply.", "Let's talk this through, face-to-face."],
+                "Co-creation Skills": ["My idea is just a starting point, let's build on it together.", "How can we combine our skills to create something new?", "This is our shared project, everyone's input matters."],
+                "Inclusive Mindset": ["Whose voice is missing from this conversation?", "We need diverse perspectives to get this right.", "Let's make sure everyone feels they can contribute safely."],
+                "Trust": ["I trust your judgment on this, you're the expert.", "I'll be transparent about my process so you're always in the loop.", "You can count on me to do what I said I would do."],
+                "Mobilization Skills": ["This is what we can achieve if we all work together!", "I have a vision, who wants to help me build it?", "Your unique skill is exactly what this movement needs."]
+            },
+            "Acting": {
+                "Courage": ["This is scary, but it's too important not to try.", "I will speak up, even if my voice shakes.", "Let's be the first ones to do this."],
+                "Creativity": ["What if we just ignored the rules for a moment?", "Let's try the weirdest idea first.", "There has to be another way to look at this problem."],
+                "Optimism": ["It's going to be hard, but I know we can figure it out.", "Look at the progress we've already made!", "I see a possibility here, not just a problem."],
+                "Perseverance": ["Okay, that didn't work. Let's try again tomorrow.", "I'm not giving up on this goal.", "This is a marathon, not a sprint."]
+            }
+        };
+
         const gameData = [
             {
                 scenario: "Your team is stuck. Instead of pushing your own idea, you ask, 'What if we looked at this from the customer's perspective?'",
@@ -136,6 +211,15 @@
         const completionScreen = document.getElementById('completion-screen');
         const scoreText = document.getElementById('score-text');
         const restartBtn = document.getElementById('restart-btn');
+
+        // New DOM elements for the One-Liner Modal
+        const oneLinerModal = document.getElementById('one-liner-modal');
+        const oneLinerBubble = document.getElementById('one-liner-bubble');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const generateNewLinerBtn = document.getElementById('generate-new-liner-btn');
+        const oneLinerModalContent = document.getElementById('one-liner-modal-content');
+        const oneLinerSkillTag = document.getElementById('one-liner-skill-tag');
+
 
         // Game State
         let currentQuestionIndex = 0;
@@ -239,11 +323,44 @@
             scoreText.textContent = `You scored ${score} out of ${questions.length}!`;
             progressBar.style.width = '100%';
         }
+
+        // --- One-Liner Generator Logic ---
+        function generateOneLiner() {
+            const dimensions = Object.keys(idgOneLiners);
+            const dimension = dimensions[Math.floor(Math.random() * dimensions.length)];
+            const skills = idgOneLiners[dimension];
+            const skillNames = Object.keys(skills);
+            const randomSkillName = skillNames[Math.floor(Math.random() * skillNames.length)];
+            const oneLiners = skills[randomSkillName];
+            const randomOneLiner = oneLiners[Math.floor(Math.random() * oneLiners.length)];
+
+            // Add animation class
+            oneLinerModalContent.classList.remove('fade-in');
+            oneLinerSkillTag.classList.remove('fade-in');
+            void oneLinerModalContent.offsetWidth; // Trigger reflow
+
+            oneLinerModalContent.textContent = `"${randomOneLiner}"`;
+            oneLinerSkillTag.textContent = randomSkillName;
+            
+            oneLinerModalContent.classList.add('fade-in');
+            oneLinerSkillTag.classList.add('fade-in');
+        }
         
         // --- Event Listeners ---
         checkBtn.addEventListener('click', checkAnswer);
         continueBtn.addEventListener('click', continueGame);
         restartBtn.addEventListener('click', startGame);
+
+        // New Event Listeners for the modal
+        oneLinerBubble.addEventListener('click', () => {
+            generateOneLiner(); // Generate a new one when opening
+            oneLinerModal.classList.remove('hidden');
+        });
+        closeModalBtn.addEventListener('click', () => {
+            oneLinerModal.classList.add('hidden');
+        });
+        generateNewLinerBtn.addEventListener('click', generateOneLiner);
+
 
         // --- Initial Start ---
         startGame();
